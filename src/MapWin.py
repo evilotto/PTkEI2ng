@@ -439,6 +439,14 @@ class mapSubWin:
         coords = map(operator.add, (x, y)*l, map(
             operator.mul, (self.gridsize[0], self.gridsize[1]*2.0/3.0)*l,
             coords))
+
+
+        # QUICK FIX FOR UBUNTU 15.10
+        # Author: vano101 freelancer
+        if 'fill' in item[2]:
+            if item[2]['fill']==' ' or item[2]['fill']=='':
+                item[2]['fill'] = ''
+
         dict = {}
         dict.update(item[2])
         dict.update(kw)
