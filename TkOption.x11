@@ -1,0 +1,5 @@
+!!! Unix/X11 specific Tk Options file
+
+!!! This file is loaded after the main TkOption file.  It is intended to
+!!! provide support for per-platform customization.
+

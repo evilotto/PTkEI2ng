@@ -1,0 +1,1398 @@
+
+2013-04-27  William Fittge <ptkei2@gmail.com>
+
+	* empSector.py: Fixed calculation for mobility to reflect new server values.
+	* empParse.py: Fixed the ParseShow class to reflect new server values.
+	* empQueue.py: Changed StopRead to a class.
+	* empCmd.py: Fixed project: if a unit is in a unowned sector, it will notify you how much lcm, hcm, available and what country to tell what is needed.
+	* empCmd.py: Added new command: coordinate - to translate coordinates back and forth for countries.
+	* empDb.py: Added sub-dictionary for new command: coordinate.
+	* empDb.py: Added two global vars for predict and visual assist.
+	* empire.py: Added code and usage for two new global vars: predict and visual assist.
+	* empParse.py: Added visual assistant: two lines of code to notify the player that a '-' or '?' is within a nav, march, map or bmap display. Activated by '-a' on the command line for 'empire.py'.
+	* empParse.py: Added a budget parser to predict technology, research, education and happiness.  Activate by '-p' on command line for 'empire.py'.
+	* empParse.py: Added a skywatch parser to collect satellite information.
+	* empParse.py: Added drop and mine parser to collect number of mines.
+	* empParse.py: Added sonar mines parser to collect number of mines seen.
+	* empParse.py: Fixed parsers for coastwatch look, sonar and llook to reflect new server patterns.
+	* empParse.py: Fixed parser for recon to reflect new server patterns
+
+2003-07-21  Laurent Martin <laurent@lfmm.org>
+
+	* empParse.py: Replaced counName regexp "\S+" in function
+	GetLookInfo by ".*?" as a country name can contain white spaces
+	(when entered with the edit command).
+
+2003-06-12  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empCmd.py, MapWin.py, empTk.py: Added sendRefresh value to
+	objects that didn't have one.
+
+2003-06-12  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse.py(ParseSpyPlane.data): Fixed the handling of
+	reconnaissance flight performed by non spy planes.
+
+2003-06-10  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd.py(CmdRefresh): Added a neededDump string in CmdRefresh
+	objects that gets filled with sendRefresh strings found in the
+	following objects in the queue to ensure that a rdb command
+	happening before a smart command doesn't get pruned.
+
+2003-06-07  Laurent Martin  <laurent@lfmm.org>
+
+	* LoginWin.py, MapWin.py, Pmw.py, PmwBlt.py, Tk_List.py,
+	Tk_VDB.py, empCmd.py, empCurses.py, empDb.py, empEval.py,
+	empParse.py, empQueue.py, empText.py, empTk.py: Replaced
+	string.ato{i,f,l} functions by int,float and long. 
+
+	* empDb.py: Removed the test for broken string.atoi function.
+
+	* MyText.py: Replaced the copyright character by (c) as Python 2.3
+	was uncomfortable with it.
+
+	* MapWin.py: In Python versions prior to 2.1.3, comparing None to
+	an object might lead to strange results. Now, when drawing a
+	sector, we added a check to see if we know the owner of a sector
+	or not.
+
+	* MyText.py: Python 1.5.2 doesn't support the call of
+	BaseClass.__init__(self, *args, **kw) so we use apply function
+	instead. The call is supported in 1.6 or later.
+
+2003-05-28  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empCmd.py, empQueue.py: Remove dummyHandler from empQueue and
+	make the normal command class compatible with EmpIOQueue.
+	* empCmd.py(CmdRefresh): Restore 'rdb' command's ability to prune
+	excess dump commands.
+
+2003-05-26  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse.py: Moved the look_info regex from the body of the
+	getLookInfo function to the module level so that it can be
+	modified by other functions/methods.  
+
+	* empTk.py:  Added tk functions createfilehandler,
+	deletefilehandler and createtimerhandler to the main window widget
+	replacing the use of Tkinter.tkinter that doesn't work when Tcl
+	uses threads. 
+
+	* LoginWin.py: Added tk functions createfilehandler,
+	deletefilehandler and createtimerhandler to the main window widget
+	replacing the use of Tkinter.tkinter that doesn't work when Tcl
+	uses threads. The initialization of these functions to cope with
+	platforms that do not support them has been placed into a
+	function. 
+
+2003-05-24  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empParse.py: Simplify baseDisp class - existing code was a gross
+	premature optimization.
+	(convertList): Remove wrapper for buggy python atoi function (move
+	test to empire.py).
+
+	* empQueue.py, OutWin.py, empParse.py, empCmd.py: Move definition
+	of baseDisp class from empQueue.py to empParse.py.  Also move
+	mechanism for looking up standard parsers to empParse.py.
+
+2003-05-20  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empCmd.py: Minor documentation updates.
+
+	* empTk.py: Add more 'commandUsage' strings.
+
+	* empParse.py: Disperse binding definitions to the individual
+	classes.
+
+2003-03-20  Laurent Martin  <laurent@lfmm.org>
+
+	* empEval(selectToExpr): Added support for square ranges that
+	cross the map limit (e.g. 40:-20). 
+
+	* empEval(selectToExpr): Added support for circular ranges
+	"@x,y:d".
+
+	* empDb, empPath: Moved function hexDistance from empPath to empDb
+	renaming it sectorDistance.
+
+	* empTk(mainWin.__init__): Removed binding of button-2 from Output
+	window as it is now managed by the MyText widget.
+
+2003-03-19  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(Cmd*): Added a commandUsage string that gets printed when
+	the user enters a malformed ptkei command.
+
+	* OutWin(Cmd*): Added a commandUsage string that gets printed when
+	the user enters a malformed ptkei command.
+
+	* empCmd(CmdLTest.receive): Fixed the case where from and to
+	sectors are the same.
+
+	* empCmd(CmdLTest.receive): Handle correctly movements that lead
+	to negative mobility.
+
+2003-03-18  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdEMove.receive): Modified the selector of destination
+	sectors that assumed that ownership of foreign sectors was a known
+	value. 
+
+	* MyText: Definition of a new class based upon Tkinter.Text to
+	replace it.  MyText supports copy even when you're not allowed to
+	modify the text.
+
+	* OutWin, empTk, TeleWin: Replacement of all occurences of
+	Tkinter.Text by MyText.MyText.
+
+	* empTk(mainWin.tranferKeys): The MyText class doesn't send
+	keystrokes back to the main window.
+
+2003-03-14  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdLTest): Added a new command: ltest.  It works like the
+	'test' command but displays the amount of mobility a land unit
+	would use to reach a given sector.
+
+2003-03-06  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdRefresh.transmit): Added a 'dump * mob' to the refresh
+	command when MOB_ACCESS is enabled. 
+
+	* MapWin(mapSubWin.redraw): Fixed sector status when the mobility
+	is below 0 (MOB_ACCESS activated). 
+
+2003-02-23  Laurent Martin  <laurent@lfmm.org>
+
+	* Release of ptkei 1.17.0.
+
+2003-02-23  Laurent Martin  <laurent@lfmm.org>
+
+	* empSector(sectorPredictions): Handle the case where you log in a
+	game with a capital not 100% efficient without a database.  The
+	'nation' statement returns info about the capital but you get an
+	error when trying to see its prediction (as the info don't contain
+	designations). 
+
+	* empDb(DatabaseSaver.reset): Changed the default Empire
+        server to blitz.wolfpackempire.com:6789.
+
+2003-02-20  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(updateDesignations):  Parsing a standard map do not
+	modify sectors ownership in order to cope with custom sector
+	types.
+
+2003-02-19  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(ParseUnits.data): Handle the case of a sonar output
+	containing several sonar maps.
+
+2002-11-07  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(ParseCoastWatch.data): the method body has been
+	replaced by a call to the getLookInfo() function to be able to
+	parse ship descriptions that contain a ship name.
+
+	* empParse(getLookInfo): the regular expressions used to match
+	ship descriptions have been modified to cope with the output of
+	the 'coast' command.
+
+2002-11-04  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(updateDesignations): Added support for mine sectors.
+
+2002-10-29  Laurent Martin  <laurent@lfmm.org>
+
+	* MapWin(mapSubWin.redraw): Added support for showing mine
+	sectors.
+
+2002-10-13  Laurent Martin  <laurent@lfmm.org>
+
+	* Release of ptkei 1.16.0.
+
+2002-10-12  Laurent Martin  <laurent@lfmm.org>
+
+	* empTk(CmdDisp): New command that highlights sector with a color
+	gradient.
+
+2002-10-10  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(getLookInfo): Modified the calling syntax and the body
+	to be able to handle ships with names, planes and land units.
+
+2002-09-27  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdSetFood): New_thr wasn't initialised if the sector
+	already had a food threshold.
+
+2002-09-04  Laurent Martin  <laurent@lfmm.org>
+
+	* empSector(max_pop): Take care of the case where we don't know
+	the efficiency of a sector when doing predictions.
+
+	* empSector(eff_work_new): copied code from the server to
+	calculate accurately the new efficiency and designation of a
+	sector and modified the tuple returned. 
+
+	* empSector(eff_new): modified due to the modification of
+	eff_work_new. 
+
+	* empSector(sectorPredictions): modified due to the modification
+	of eff_work_new. 
+
+	* empEval(selectToExpr): This function can now be used with any
+	database (change propagated to all calling functions). 
+
+	* empEval(selectToExpr):  Handle cases where one of the parameters
+	of a condition is a string (e.g. type=frg).  This is intended for
+	unit databases.
+
+2002-08-18  Laurent Martin  <laurent@lfmm.org>
+
+	* empQueue(LoginHandler.line):  Removed the 'show sector stat'
+	sent at each connection to the server: it is now in the
+	'first.emp' file. 
+
+2002-07-13  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdSetFood): Added a new command that sets food thresholds
+	for maximum growth.
+	  
+2002-07-10  Laurent Martin  <laurent@lfmm.org>
+
+	* empSector(max_pop): Fixed the max pop of sectors mountain '^'
+	and plain '~'.  
+
+	* empParse(getLookInfo): Added a function to parse 'lookout'
+	command output as this type of output can be seen with several
+	other commands: llookout, navigate, march, recon.
+
+	* empParse(ParseUnits.data): Replaced the look_info stuff to
+	functon getLookInfo.
+
+	* empParse(ParseSpyPlane.data): Added handling of recon performed
+	by non spy plane.
+
+	* empParse(ParseShow.data): Changed some regular expressions moved
+	from ParseUnits to getLookInfo.
+
+2002-07-09  Laurent Martin  <laurent@lfmm.org>
+
+	* empSector(food_needed_for_breed): Fixed a bug that overestimated
+	the amount of food needed by a sector (it didn't take into account
+	the max_pop factor). 
+
+2002-06-28  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdDmove): Added a new command "dmove".
+
+	* empSector(mob_cost): Modified the min_mob_cost from 0.01 to
+	0.001 (value found in emp4/include/sect.h). 
+
+2002-06-11  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdRemove): Replaced the 'remove' command by an upgraded
+	version.
+
+2002-06-09  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd (CmdRemove): Complete rewrite of this command so it now
+	handles sectors range to remove units from the db.
+
+	* empParse (ParseSpy.__init__): Fixed the unitInfo regexp that
+	didn't detect allied units.
+
+	* empParse (updateDesignations): plain sectors appears in 'map'
+	just like mountains (thanks to Mark Olzheim). 
+
+2002-05-28  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse (updateDesignations): exclusion of all designations
+	that aren't actual designations.
+
+	* empParse (ParseShow): update the sectorDesignationConvert regexp
+	when the code of a sector hasn't changed but when the name has
+	changed (c: capital -> c:city when BIG_CITY is on).
+
+2002-05-27  Laurent Martin  <laurent@lfmm.org>
+
+	* empSector (mob_cost): Replaced 122 by 122.0 in the mobiliy cost
+	function so that the calculation takes into account the road
+	factor.
+
+	* empSector (max_pop): Modified the function to take into account
+	options RES_POP and BIG_CITY.
+
+2002-05-07  Laurent Martin  <laurent@lfmm.org>
+
+	* EmpParse (ParseShow): Added parsing of 'show sector build' and
+	'show sector capa'. 
+
+2002-03-24  Laurent Martin  <laurent@lfmm.org>
+
+	* empPath (hexDistance): Added a command hexDistance that computes
+	the distance between two sectors.
+
+2002-02-01  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdProjection): Added a "projection" command that show
+	what commodities are needed to have all your units go to 100%.
+
+	* empDb: Added new tables into the database for unit types.
+
+2002-01-28  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse (ParseSate): This function now parses correctly land
+	units and ships reports.
+
+2001-10-31  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse (ParseUnits.data): Fixed a bug in the sonar regular
+	expression.
+
+	* empCmd (CmdDanno, CmdDtele): Added two new commands to dump
+	telegrams and announcements.
+
+2001-10-27  Laurent Martin  <laurent@lfmm.org>
+
+	* empEval (InitializeSelectors): Added new territories fields to
+	the selectors to be compliant with 4.2.10 version of the server.
+
+	* CenWin (SectorCensus): Added new territories fields and methods
+	to the census window to be compliant with 4.2.10 version of the
+	server.
+
+2001-10-20  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse (ParseShow): Added a class to parse the output of the
+	show command (only show sector stat).
+
+	* empSector (type_mcost): This function now uses the megaDB to
+	find the mobility cost.
+
+	* empSector (packing_bonus): This function now uses the megaDB to
+	find the packing bonus.
+
+	* empSector (max_pop): This function now uses the megaDB to find
+	the max population of a sector.
+
+	* empDb (DatabaseSaver): Changed the database version number from
+	32.2 to 32.3.
+	* empDb (DatabaseSaver.reset and DatabaseSaver.resetUpdate): Added
+	a new table into the database: sectortype.
+
+2001-10-15  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse (ParseUnits.End): When deleting self.coord in
+	ParseUnit.End, we handle the case where it doesn't exist by
+	ignoring the exception.
+
+	* empParse (ParseUnits.data): The sonar now works.  The problem was
+	that radar returns a complete hexagon which diameter is equal to
+	two times the range of the radar.  The sonar can return incomplete
+	map that aren't parsed because the parser expects a complete map.
+	Thus I've added some tests to check whether or not the map has the
+	expected number of lines, and if not it adds those lines.
+
+	* empParse (ParseUnits.End): Added an End() method to handle
+	corretly the sonar command.
+
+2001-10-05  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse.py (ParseDump.data): Fixed an error that occurs when
+	the user 'sdump' only one field (e.g. sdump * eff).
+
+	* PmwBlt.py: Added file PmwBlt.py needed by Pmw.
+
+	* Pmw.py: Replaced Pmw.pyc by Pmw.py so that it gets compiled by
+        the python interpreter of the user thus removing an useless
+        dependency.
+
+	* empParse.py (ParseTorpedo): Added a parser for command 'torpedo'
+        to detect sunk ships and remove them from the database.
+
+	* empParse.py (ParseFire): Added a parser for command 'fire' to
+        detect sunk ships and remove them from the database.
+
+	* empParse.py (ParseBomb): Added a parser for command 'bomb' to
+        detect sunk ships and remove them from the database.
+
+	* empParse.py (ParseUnits.data): Added a handler for sonar
+	command when the sonar detects a ship.
+
+	* empEval.py (foreach): In new versions of Python (1.6 and above),
+	the append() methor for lists can no longer be invoked with more
+	than one argument.
+
+	* empCmd.py (CmdRemove): Added a 'remove' command that allows the
+	player to remove a unit from the database.
+
+	* empDb.py (DatabaseSaver.reset): Changed the default Empire
+        server to blitz.empire.cx:6789.
+
+	* empSector.py (packing_bonus): Modified the bar packing bonus
+        when it comes from a warehouse or an harbour.
+
+	* empSector.py (type_mcost): Added '@' to the 1 mob cost sectors
+        list.
+
+	* empQueue.py (LoginHandler.Connect): In new versions of Python
+	(1.6 and above) the connect() method for sockets needs a tuple as
+	a parameter.
+
+1999-10-17  Kevin O'Connor  <kevin@ohio.mydomain.org>
+
+	* empText.py (SText): Included new method Process() for
+	compatibility.
+
+	* empQueue.py (LoginHandler.Connect): Set self.firstConnect prior
+	to calling login_error - this way if login_error recursively calls
+	Connect we don't get in a permanent loop.
+
+1999-10-08  Kevin O'Connor  <kevin@ohio.mydomain.org>
+
+	* empDb.py (dictDB.updates): Updating a value to None will cause
+	the value to be deleted from the database.
+
+1999-10-03  Kevin O'Connor  <kevin@ohio.mydomain.org>
+
+	* empQueue.py (EmpIOQueue.HandleInput): Moved socket lull code
+	from empTk interface to empQueue interface.  Now there is a
+	generic Process() method passed through the generic viewer
+	classes.  This allows all the components to buffer, and then
+	update when needed.
+
+	* empParse.py: Removed the commented out code responsible for
+	database updates prior to the ascii->native database conversion
+	project.
+
+	* LoginWin.py (QueueStatus.checkQueue): Cleaned up update
+	countdown display to make it look more reliable/accurate.
+
+	* empParse.py (ParseAttack): Extended attack parser to support
+	assault command.
+	(ParseBuild): Recognize build tower command.
+
+1999-09-19  Kevin O'Connor  <kevin@ohio.mydomain.org>
+
+	* empCmd.py (CmdNova.receive): Fixed an oversight reported by Norm
+	Beekwilder and Karl-Koenig Konigsson.  The mobility test for nova
+	should read mob<1 instead of mob=0.
+	(CmdRaw): Added new command: raw.  Raw will transmit the rest of
+	the command line unaltered to the server.
+	(CmdOrigin): Added new origin command.  It is a dummy command that
+	prevents this unsupported command from being sent.
+
+	* CenWin.py (cenWin.__init__): Fixed a bug reported by Norm
+	Beekwilder that could cause incorrect improvement commands to be
+	sent for rail/defense upgrades.
+
+	* empParse.py (convertList): Fixed a bug reported by Norm
+	Beekwilder that would cause the client to choke on Infantry units.
+	Reimplemented the function to squeeze a little more performance
+	out of it.
+
+	* empCmd.py (CmdRefresh.transmit): The refresh command, rdb, has
+	been updated to use on transmission timestamp binding.  This fixes
+	a long standing bug which could cause redundant dumps to be issued.
+
+	* empQueue.py (DummyHandler.sending): The queue place marker class
+	that synchronizes smart commands with server output has been
+	updated to support an 'on-sending' callback.  This callback is
+	invoked just before the command would be transmitted to the
+	server.
+
+1999-09-16  Kevin O'Connor  <kevin@ohio.mydomain.org>
+
+	* empQueue.py: Cleaned up much of the queue manipulation commands.
+	Hopefully it is a little easier to understand now.
+
+	* MapWin.py (CmdMap): Integrated destroy callback into new command
+	parser class.
+
+	* empTk.py: Moved whole bunch of parsers from empTk.py to more
+	appropriate files: CmdMap and CmdBestpath to MapWin.py; CmdLogin
+	to LoginWin.py; CmdWRead to TeleWin.py; CmdWind and CmdCShow to
+	OutWin.py.
+	(mainWin.main): Updated init code to use new command registration
+	code.
+
+	* empCmd.py (baseCommand): Added new base class to support all
+	synthetic commands.  In the past, commands were defined as
+	functions that would manually call empCmd.EmpParse methods adhoc.
+	Now a general framework for defining commands and their parameters
+	can be specified using this new base class.
+
+** Version 1.10 Release
+
+1999-06-15  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* empText.py: Added 'import string' - an embarrassing
+	omission.  Bug reported by John Lehmann.
+
+1999-05-31  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* Pmw.py: Updated PMW to version 0.8.  This version now works with
+	Python 1.5.2.
+
+1999-05-12  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* empParse.py (ParseMap.data): The map parser could only handle
+	columns between -99 and +99 - I added support for bigger maps.
+	Thanks goes to Karl-Koenig Koenigsson for reporting this error.
+
+1999-02-14  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* empTk.py (mainWin.__init__): Changed status bar at bottom of
+	screen to have a more common "status bar" look.
+
+** Version 0.35a Release
+
+1999-02-02  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* empCmd.py (EmpParse.__init__): Renamed "Move" command to "Mover"
+	- makes it easier to distinguish between "move" in the output
+	logs.
+	(EmpParse.CmdRedirect): Added support for standard empire pipe
+	syntax.  Added a check to prevent overwriting of files unless '!'
+	is given.
+	(EmpParse.CmdExec): Added support for a runfeed command.  Runfeed
+	interprets the output produced from executing a system command.
+
+1999-01-29  Kevin O'Connor  <kevin@delaware.mydomain.org>
+
+	* empQueue.py (LoginHandler.Connect): Fixed a bug that was
+	preventing start.emp from being executed on servers that are
+	connected to for the first time.
+
+	* empParse.py (ParseDump.data): Added a distinction between
+	official timestamps and unofficial timestamps.  The timestamp is
+	"officially" updated after a complete dump; it is "unofficially"
+	updated at the beggining of a dump.  In theory, this allows dump
+	commands that are issued during the dump to use the latest
+	speculated timestamp, while client crashes or mishaps during a
+	dump wont cause the timestamp to get mangled.  However, timestamp
+	recovery on errors isn't yet coded..
+
+1999-01-10  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* MapWin.py (mapSubWin.DoCoord): Improved the range selection
+	code.  All bogus ranges are now weeded out.
+
+	* empDb.py (dictDB.__getstate__): Optimized this method by
+	preallocating the lists that are created.  This does improve the
+	performance noticibly.
+
+1999-01-07  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* empire.py: Moved all the py files into their own sub-directory
+	src/.  Only empire.py remained in the start directory.  Updated
+	empire.py to check for pre-1.5 python versions.  Updated empire.py
+	to alter the module path so that src/ replaces the current
+	directory.
+
+	* empParse.py (ParseNation.data): Enabled the nation parser to
+	detect when a country has no capital at all.
+
+	* MapWin.py (MoveMode): Whole new class.  The MoveMode re-arranges
+	the map window to allow a special area for interactive prompts.
+	In this area, the user is allowed to point-and-click enter a
+	path.  There is a lot of new features here; this is very
+	experimental.
+
+	* empCmd.py (EmpParse.CmdMove): New command "Move".  Move can be
+	used for making multi-stage moves.  It allows a series of sectors
+	to be given simultaneously; the command will then move the
+	commodity to and from each of the midpoint sectors.
+
+1999-01-06  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* MapWin.py (mapSubWin.redraw): Added 'lift' clauses to all the
+	redrawing routines.  This will insure a consitent object stacking
+	order - IE. a sector decoration will never overlap a ship
+	decoration.
+
+	* empCmd.py (EmpParse.CmdPredict): Added command 'Predict' that
+	displays predictions for a sector.  The text displayed is
+	identical to that of the Censor window's prediction area.  This
+	command is useful in text-only mode.
+
+	* empDb.py (DatabaseSaver.load): Altered the exception handling
+	code in the load/save database functions.  The full exception is
+	now passed to the calling function.  This may be a little
+	misleading to users, but it allows for significantly more
+	flexibility.
+
+1999-01-05  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* empDb.py (DatabaseSaver.reset): Added a needSave attribute to
+	the database IO class.  This should stop the client from writing
+	unchanged and completely empty databases to disk.
+	(dictDB.__getstate__): Changed the database storage of the dump
+	databases.  Instead of pickling the database directly, now a list
+	of headers and values are stored.  The old method would store the
+	headers for each item's dictionary along with every item.  The new
+	method stores the headers only once.  This dramatically decreases
+	the size of the database - on a medium sized test country the
+	database size was decreased by 60%.  There is a slight performance
+	penalty on loading and saving databases, however.  This addition
+	breaks compatibility with older databases.
+
+	* *.py: Replaced the tabs back in the python files.  The tabs were
+	not the cause of the Macintosh problems.
+
+	* empTk.py: Added support for automatically loading platform
+	dependant TkOption files.  Unix has TkOption.x11, and windows has
+	TkOption.w32.  This should allow for a better cross-platform
+	look.
+
+	* LoginWin.py (loginWin.__init__): Added a hack to the Login
+	window that forces it to always be on top of the main window when
+	on a Windows platform.  Windows has a very odd behavior where it
+	forces the root window above the login window at initialization..
+
+1998-12-30  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* *.py: Changed all the files to use spaces instead of tabs for
+	indentation.  This is being done temporarily to see if it is
+	causing a Macintosh problem.
+
+1998-12-20  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* empDb.py: Changed the dictDB class to use a dictionary when
+	pickling the database - this should make the storage more
+	flexible.  Also added __setstate__ and __getstate__ pickling code
+	to the Countries/EmpTime classes.  These changes make the database
+	incompatible with previous versions.
+	(DatabaseSaver): Wrapped all the database IO routines into its own
+	class.  Also wrapped some global variables from empQueue and empDb
+	into this class.  This should improve the code structuring, and
+	make it easier to improve the flexibility later on.
+
+	* CenWin.py (cenWin.getKey): Fixed a bug that was displaying unit
+	id's as "(XX,)" instead of just "XX".
+
+	* LoginWin.py (loginWin.setDBValues): Modified the login window
+	code to automatically send the "first connect" commands every time
+	a change is made to the host/port/country sections.  This is done
+	to forestall possible confusions that arise when a database is
+	incorrectly using outdated version information from a different
+	server.  Also, the overhead of sending the "first.emp" file is
+	relatively minor.
+
+	* empSector.py (sectorPredictions): Moved the contents of
+	Predict.py to empSector.py.  Predict.py was pretty unnecessary,
+	and the sectorPredictions function has some usefulness in the
+	text-only client as well as the Tk interface.
+
+	* *.txt: I converted all the documentation files, including
+	README.1st, to html files.  I was dismayed by the fact that
+	Windows didn't read the .txt files properly by default.  Since
+	this client is so portable, html files are better suited for wide
+	spread distribution.
+
+	* empSector.py: It looks like Ulf Larsson was using math.floor in
+	a couple of situations where a ceiling function was better
+	situated.  I used a -math.floor(-X) call to simulate ceiling.
+	This elliminates the off by one messages that would result when a
+	totally unknown sector is highlighted.
+
+1998-12-15  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* empTk.py: Added support for Pmw Balloon help.  Now those
+	annoying Windows like popup boxes will appear with helpful hints.
+
+	* empParse.py (ParseCapital): Added a parser for the capital
+	command.
+
+	* MapWin.py (mapSubWin.redraw): Added support for a capital
+	marker.  This marking shows where the current capital is located.
+
+1998-12-13  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* *.py: Converted the empire database to use native python formats
+	instead of ascii strings.  This is a major change to the database
+	and code base.  Old database will no longer be useable!  Also,
+	there are bound to be numerous bugs resulting from this..
+
+	* empParse.py (sectorNameConvert): Changed incorrect '/' value for
+	wasteland sectors to '\'.
+
+	* empQueue.py (EmpIOQueue.pauseQueue): Added support for
+	"disconnect" mode.  Disconnect mode is a paused off-line mode -
+	the client is not connected, and will not re-connect even after
+	server commands have been issued.  Disconnect mode is activated
+	via the "Pause Queue" button on the Queue options menu.
+
+1998-12-12  Kevin O'Connor  <kevin@delaware.localdomain>
+
+	* TkWin: New file in the distribution - this will contain some
+	default settings for Windows machines.  Note:  This file is not
+	automatically sourced - it should be copied over TkOption.
+
+	* MapWin.py (mapSubWin.__init__): Changed the map window to use
+	the grid manager instead of the packer.  This results in a
+	horizontal scrollbar that is better aligned with the map window.
+	This was done to help improve the "look-and-feel" under Windows.
+
+	* empTk.py (mainWin.transferKeys): Changed the toplevel widget
+	focus redirector.  Previously, the focus would change whenever the
+	mouse entered an auxilerary toplevel window.  Unfortunately, this
+	totally confused Windows machines - now the focus changes only
+	when keypresses are entered into the toplevel windows.
+
+	* LoginWin.py (loginWin.DoLoad): Added an ability to dynamically
+	load/save the database to new files directly from within the login
+	window.  This is still experimental!
+
+	* CenWin.py (leaveLabel): Changed the enter/leave bindings in the
+	censor window to use the widgets old relief instead of a hardcoded
+	value.
+	(LabPair.__init__): Testing out new censor window appearance -
+	instead of all the values being in a "sunken" appearance, the
+	window will appear in a sort of grid.
+	(LabPairIdx.update): Changed the appearance of "," sectors to
+	simply "".
+	(LabPair.__init__): Set the default censor window labels to be
+	capitalized.
+
+1998-12-11  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.__init__): Reverted the pane interface in the
+	PMW widget set to the old pane interface.  The PMW interface is
+	lacking a few key features - in the future I may hack them into
+	PMW and submit the changes, but for now it is best to just use the
+	existing code.
+
+1998-12-11  Kevin O'Connor  <koconnor@yeager.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.grabFocus): I finally got the focus to
+	transfer among different toplevel windows - with some help from
+	comp.lang.tcl..  Now, key events pressed in the output windows, or
+	the Map windows will be redirected to the command-line.
+
+1998-12-10  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.redraw): Removed the check for lists when
+	clearing the update database - lists are no longer used.
+	(mainWin.__init__): Fixed the alignment of the sub-prompt window -
+	it was not filling its entire space, and under Windows it made the
+	area look odd.
+	(mainWin.DoAltHandler): Added a check to DoAltHandler to make sure
+	a non-string keycode wont break the handler.
+
+	* LoginWin.py (loginWin.__init__): Added groups to the login
+	window.  This is part of the Pmw package - a group is a box that
+	is drawn around a "group" of associated widgets.
+
+1998-12-09  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* TeleWin.py (teleWin.DoSearch): Added a regular expression search
+	to the telegram window.  Using this feature, it is possible to
+	isolate portions of the telegram database.
+	(teleWin.DoSend): Added ability to send a new telegram or
+	annoucement - I.E. messages that are not replies to previous
+	messages.  For telegrams, this pops up a dialog box to input the
+	country id.
+
+	* empCurses.py: Added some support for a curses interface.  This
+	interface is now located in its own new file.  Unfortunately, I
+	got confused in the myriad of curses programming, and this mode is
+	pretty much useless.  It may be useful for someone to expand upon,
+	however.
+
+	* empText.py: Moved the text interface class, SText(), from
+	empire.py to this new file.  This was done because several people
+	have expressed interest in an expanded text mode, and because
+	empire.py is often byte-code compiled multiple times.  If the text
+	interface is expanded, it should have its own file to reduce
+	compilations.
+
+	* MapWin.py (mapSubWin.drawItem): Converted the Tk Option storage
+	of y coordinates so that a value of 1.0 represents the distance
+	from the center of a row to 2/3rds the way to the next row, _not_
+	the full distance from the center of one row to the next.  This
+	was done to simplify the coordinates in the TkOption file.
+
+1998-12-07  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* MapWin.py (mapSubWin.displayUnit): Added a patch by Bernhard
+	Reiter that improves his earlier combat details mode.
+
+	* empSector.py (work_needed_for_prod): Fixed a bug reported by
+	Bernhard Reiter - An 'a' sector with unknown fertility could cause
+	a divide by zero error.
+
+1998-12-02  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* Pmw.pyc: The Ptkei package will now include a Pmw.pyc file.
+	This file will contain the working components of the Python Mega
+	Widget set in a binary form.  This will allow end users and
+	developers to use the program without having to download and
+	install the full Pmw package.  Developers that wish to program
+	additional Pmw features will still need to obtain the Pmw package
+	- it can be located via the main python web page.
+
+1998-12-01  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* Tk_VDB.py (getOption): Changed the TkOption file's default
+	canvas options lookup to use class names instead of alternate
+	group names.  This means that the old entries of the form
+	"sectorType" now become "Sector".  This makes the TkOption file
+	more standardized.
+
+	* TkOption: Added a patch from Bernhard Reiter.  Bernhard made
+	some minor additions to the map window, and added some helpful
+	comments to the TkOption file.
+
+	* MapWin.py (mapSubWin.redraw): Added a patch from Bernhard Reiter
+	that adds support for a details mode.  In this mode, all the units
+	are displayed in a small text font inside the sector.  I have left
+	this feature commented out, because it currently uses too much
+	screen space for "high unit" countries.
+
+	* empTk.py (mainWin.Begin): Changed Begin/End to only force output
+	when they are called from the first/last pending command,
+	respectively.  This prevents unnecessary redraws in the middle of
+	queue output, while still maintaining the same responsiveness.
+	(mainWin.bogusFileHandler): Added a check for socket activity in
+	the Windows empulated file handlers.  This makes the emulators
+	more similar to the real file handlers, and it also reduces calls
+	to HandleSock(), which will probably increae overall performance.
+
+	* empParse.py (ParseMove.flush): Fixed a bug in the explore parser
+	that was preventing explore/move prompts from updating the
+	display.
+	(sectorNameConvert): Added an entry for bridge towers.
+
+	* empire.py (SText.flush): Fixed a bug in the text-only interface
+	that prevented classes that answer sub-prompts from working
+	properly.  This fixes nova in text-only mode.
+
+	* empTk.py: The Tk package now uses the Pmw interface.  Developers
+	will be required to install the Pmw package on their machines.  I
+	have also hacked empire.py to include '/scratch/koconnor' in the
+	default import path.  Other developers can change this to include
+	a hardwired location for Pmw as well.  However, Pmw should really
+	be included in the python's default module listing..
+	(mainWin.__init__): Added support for Pmw's pane feature.  This
+	elliminates the code that I have written to support panes.  This
+	is experimental and not fully featured yet.  It may not stay at
+	all.
+
+1998-11-21  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* TkOption: Ulf Larsson demonstrated the appearance of his client.
+	I'm not a fan of the appearance, but it definately does look
+	totally different and may be worth looking at.  With the new
+	MapWin.py conversion, I have made Ulf's appearance totally
+	customizable via the TkOption file.  This file now reflects the
+	lines necessary to activate Ulf's settings - but they are
+	commented out.
+
+	* MapWin.py (mapSubWin.drawItem): Changed the low-level map window
+	drawing routines.  Almost all of the map markers are determined
+	dynamically from the TkOption file.  All the MapWin.py code that
+	placed these markers on the canvas were changed to call drawItem.
+	The drawitem routines determines if the object has a corresponding
+	Options database entry.  If it does, it will generate a call to
+	canvas create_XX with parameters from the options database.  It
+	will also cache all options lookups for optimization.
+	(mapSubWin.redraw): Moved the unit drawing code to after the
+	sector drawing code.  This allows the sector to be designated as a
+	filled polygon that wont hide the unit markings.
+	(mapSubWin.__init__): Made the default sector size programmable
+	via the TkOption file.
+	(mapSubWin.redraw): Hacked in a clause that displays the sector
+	differently when an owned sector has no mobility.  This is derived
+	from an idea by Ulf Larsson.
+	(mapSubWin.redraw): Bernhard Reiter submitted a patch that works
+	with the new map markings.  A little red dot appears when a sector
+	is owned but not oldowned.  Also, if an enemy sector owns a sector
+	that you oldowned, the circle will be colored green.
+
+1998-11-19  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* *.py: I removed all instances of "from Tkinter import *" and
+	replaced it with "import Tkinter".  This also required prefacing
+	all of the Tkinter calls with the string "Tkinter.", and it
+	required changing all the all-caps variables to their appropriate
+	message strings - IE. BOTTOM became 'bottom'.  To do this
+	conversion, I ran all the Tk dependant source files through a
+	massive sed script.  This conversion was done for future
+	expandability with the PMW widget set.
+
+	* empTk.py (mainWin.displayMsgs): Implemented client side message
+	queue.  The client will now buffer lines of data that are being
+	sent to the command-line in an internal Python list.  The entire
+	output queue is transmitted for display when the socket becomes
+	empty, when a command-line prompt is encountered, or when an Error
+	message is received..  This was done to help prevent Tk lockups
+	that would occur when the Tk interface postpones writes so that it
+	can burst them all at once.  The results of this change are
+	impressive - a noticeable increase in perceived reliability
+	results!
+
+	* Predict.py (sectorPredictions): Removed the "New" column from
+	censor window.  Re-arranged the censor window to use two columns
+	of 7 rows instead of 1 column of 14 rows.  Added a new sector
+	predictions text area that will display predicitons on what will
+	occur to the sector during the update.  The new code for
+	predictions is located in a new file Predict.py.
+
+** Version 0.32 Release - Note: Only actual addition is the empQueue.py fix.
+
+1998-11-19  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empQueue.py (LoginHandler.Connect): Fixed a portability problem
+	when using non-blocking sockets on Windows.  Windows machines
+	return EWOULDBLOCK, while unix returns EINPROGRESS?  Bernhard
+	Reiter reported and aided in fixing this bug.
+
+1998-11-16  Kevin O'Connor  <koconnor@gagarin.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.str2Coords): Added preliminary support for
+	localized bestpaths.  The command "Bestpath" can be used to
+	display a graphical bestpath between any two sectors on the main
+	map window.
+
+1998-11-15  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* CenWin.py: Included support for the routines provided by Ulf
+	Larsson that predict new levels for civilians/food/etc.  I added a
+	new column to the commodities list, but I don't really like the
+	layout.  I think adding a new window to the bottom of the sector
+	window - or perhaps to the side of the commodities area - would be
+	better.
+
+** Version 0.31 released.
+
+1998-11-15  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empCmd.py (EmpParse.HistSend): Added support for commands of the
+	form "^txt^newtxt".  When this is entered the last command is
+	searched and the first occurence of "txt" is replaced with
+	"newtxt".
+
+1998-11-13  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empCmd.py (EmpParse.CmdMMove): Changed the mmove command-line
+	interface to use the lower level movegenerator class.  This allows
+	the client to specify variable parameters for levels and mobility.
+	(EmpParse.CmdEMove): Block copied the mmove interface to a new
+	interface for exploring.  This is a bit of a hack, and it doesn't
+	work fully yet.
+
+1998-11-12  Kevin O'Connor  <koconnor@gagarin.cs.Buffalo.EDU>
+
+	* empParse.py (ParseVersion): Enhanced the version parser
+	significantly.  Now just about all values should be available.
+	(ParseNation): Enhanced the nation parser.  All nation values are
+	now available.
+
+	* empSector.py (uw_needed_for_prod): Ulf Larsson provided an
+	updated empSector file.
+
+1998-11-11  Kevin O'Connor  <koconnor@gagarin.cs.Buffalo.EDU>
+
+	* empDb.py (sectorWrap): Moved the definition of some
+	sector wrapping tools from empCmd.py to empDb.py - they are useful
+	in a lot of places.
+
+	* empPath.py: Ulf Larsson submitted a new series of
+	empPath.py/empSector.py - the mmove tool files.
+
+** Version 0.30a released.
+
+1998-11-10  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.DoAltHandler): Changed the Alt-key mover to
+	also insert the character into the command line.  Ulf Larsson
+	clarified his original suggestion and recommended that this be the
+	standard behavior.
+
+	* LoginWin.py (QueueStatus): Added a new pull-down menu that
+	handles special queue options.  Within this menu it is possible to
+	clear the queue, pause the queue, set the command stack to raw
+	mode, or set the command stack to burst mode.  I've placed this
+	class in the LoginWin files because like the loginWin class, this
+	class also converses with the socket manager.  I'll probably
+	rename LoginWin.py to something like QueueWin.py in the future.
+
+	* empQueue.py (EmpIOQueue.pauseQueue): Added a pause feature to
+	the queue.  When the queue flags are set to QU_PAUSED, no new
+	commands will be sent to the server.
+
+** Version 0.29a released.
+
+1998-11-08  Kevin O'Connor  <koconnor@gagarin.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.DoAltHandler): Added support for moving the
+	censor window's selection via an alt key sequence.  The keys
+	Alt+[gyujnb] will now move the selection.  This was a suggestion
+	from Ulf Larsson.
+
+	* empCmd.py (EmpParse.HistSend): Moved the history substitution
+	routines from empTk to empCmd.  They also now support '!!' and
+	'!cmd' syntax.  Since these are now in empCmd, they will be
+	available from both the text interface and the graphical
+	interface.
+	(EmpParse.CmdMMove): Added a stub for Ulf Larsson's multimove
+	tool.
+
+	* empEval.py: Did some rearranging of the evaluate routines.
+	Broke up evalString() into evalString() and estrToExpr().  Also
+	got foreach() working properly, and more efficiently.
+
+1998-11-07  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* MapWin.py (mapSubWin.redraw): The mapwindow will now place the
+	next designation next to the current designation in the mapwindow.
+	This was a suggestion from Ulf Larsson.  I'm going to test it out;
+	it may or may not stay.
+
+	* empTk.py (mainWin.insertText): Added a new binding to <Tab> that
+	will insert the censor window's coordinate into the command line.
+	This was a suggestion by Ulf Larsson.  I also consolidated the
+	MapWin code that did a similar function.
+
+	* empCmd.py (EmpParse.CmdRefresh): Changed command "sync" to
+	command "rdb".  This is not a convenient change, but I feel it
+	must be done to forestall confusion between database refreshes and
+	client server synchronization.  The "sync" command has nothing to
+	do with synchronization; it is purely a database related command.
+
+1998-11-06  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empParse.py (ParseSate): Added a satellite parser.
+
+1998-11-05  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py: Added a hack to the Tk initialization code that will
+	set a default font for Entry/Listbox that is the same as Text.
+
+	* empire.py (SText.pathPrefix): Moved the automatic database
+	saving utility from empDb.loadDB to empire.py.  This should make
+	it easier to import the database from/to external programs.
+
+	* TeleWin.py (teleWin.redraw): The telegram window will now
+	display the arrival time in local time.  The telegram window will
+	automatically update when a better guess is made at the server
+	time.
+
+	* empDb.py (EmpTime.noteTime): The time class now sets its update
+	database when it notes a change in the server time.  This allows
+	utilities to re-adjust according to changes in the server time.
+
+	* empParse.py (ParseRead): Changed the telegram database to use a
+	more structured method of storing telegrams.  The header for the
+	last read telegram is now kept separate from the telegram
+	database.  Also, the telegram headers now store country names and
+	times in native formats.
+
+1998-11-03  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empCmd.py (sendTelegram): Added new telegram sending function.
+	The previous telegram sending mechanism used a parse class that
+	listened to the server subprompts.  It incurred a significant
+	amount of latency.  This new function will burst out the entire
+	contents of the telegram.  Now even very large telegrams can be
+	sent almost instantly.
+
+	* MapWin.py (mapSubWin.DoCoord): Fixed bug in the coordinate
+	routines that caused the coordinates to get confused when the
+	maximum global y coordinate was not divisible by 4.
+
+	* empCmd.py (telegramParser): Move the telegram sender class from
+	TeleWin.py to empCmd.py.  The telegram sender could be useful
+	outside the Tk interface.
+
+1998-10-30  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.HandleSock): Moved the responsibility for
+	noting update checking from the individual parsers to the empTk
+	routines.  Previously, when any parser made a db update it would
+	call the updateDB() chained method.  Now, the Tk routines will
+	periodically check for database updates, and update when
+	appropriate.
+
+	* empDb.py: Changed the global database entry megaDB['updated'] to
+	be contained in its own global variable: updateDB.  Now the update
+	database is separate from the main database.
+
+	* empParse.py: Added new file empParse.py.  This file now contains
+	the server parsers that were located in empDb.py.  Now empDb.py
+	contains only those classes/routines necessary to manage the
+	database.
+
+1998-10-25  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empEval.py (evalString): Added support for run-time evaluation
+	of the 'version' and 'nation' databases.
+
+	* empDb.py (ParseTele): Added new parser that scans outgoing
+	telegrams.  This is useful for referencing your own
+	communications.  Currently, this will break the read parser into
+	misinterpreting re-read telegrams; that parser needs to be
+	updated.
+
+	* empQueue.py (SyncHandler.__init__): Fixed a bug that was leaving
+	incorrect flags after a 'sync' command was forcibly removed.
+	(EmpIOQueue.sendCommand): Added a really nasty hack to this
+	function; it may now detect subprompt interruption.  However, it
+	is sure to be buggy..
+	(EmpIOQueue.popHandler): Created a new routine.  popHandler can be
+	used to remove queue items spontaneously.  This routines is used
+	by the SyncHandler and sub-prompt detection in NormalHandler to
+	remove undesired queue items.
+
+1998-10-23  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empQueue.py (NormalHandler.line): Fixed bug in the sub-prompt
+	interruption checking code that was associating incorrect lines
+	with sub-prompts.
+
+** Version 0.28a released.
+
+1998-10-19  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empCmd.py (EmpParse.Send): Changed the client-command detector
+	to use a sorted list instead of a dictionary.
+	(EmpParse.CmdSync): Modified the sync syntax from '<flags>sync' to
+	'sync<flags>'.  This was done so that it would emulate the other
+	commands - using 'sync' as a base command format.
+
+	* empDb.py (findCmd): Changed the command detection routines from
+	using a dictionary to store the command names, to a sorted list.
+	The reason for this, is that many server commands can have
+	arbitrary suffixes.  For example, 'execute' will also be run with
+	'executess'.  The new detection method will catch these
+	occurrences.
+
+1998-10-18  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empQueue.py (NormalHandler.line): Added support for
+	automatically detecting when a burst'd command answers a
+	sub-prompt.  This was one of the final obstacles in the long
+	awaited queue conversion.  It is now almost possible to
+	burst/sync/fullsync commands at will.  The main queue feature that
+	still needs to be added, is the ability to determine when a newly
+	issued command will override a current prompt.  This will have to
+	be resolved when the display viewers are updated to support
+	dynamic bursting.  But before that, the queue system should be
+	fairly stable.
+	(SyncHandler.__init__): Added support for a new type of queue
+	flag: QU_FORCEBURST.  Forceburst is used with the sync commands -
+	dump/ldump/sdump/etc. - to insist that upcoming QU_SYNC commands
+	should be treated as QU_BURST.  This makes it possible to burst
+	out a whole series of dump commands.  This dramatically increases
+	the performance of the sync command.
+	(EmpIOQueue.AddHandler): Enhanced addHandler to support the
+	features of prependHandler.  The two really didn't differ much,
+	and I think prependHander was a little buggy..
+
+	* empTk.py (mainWin.Answer): Added more support for update
+	interrupted commands.  If a sub-prompt is now pending when an
+	update occurs, the Tk routines should detect this, remove the
+	prompt, and beep the user.
+
+	* TeleWin.py (teleWin.redraw): Reversed telegram window sort
+	order, and removed the scroll to bottom hack added earlier.
+	Having the most recent telegrams at the top, IMO, is more useful.
+
+	* empQueue.py (SyncHandler.__init__): Set the sync commands to use
+	bursting mode.  This should significantly reduce latency for these
+	frequently used commands.  However, this is experimental due to
+	the current state of the queue code.
+	(EmpIOQueue.HandleInput): Fixed a serious bug that was preventing
+	QU_SYNC from pre-scanning the buffer.
+
+	* empDb.py (updateDesignations): '$' designations in maps will no
+	longer be confused as a sector type.
+
+	* empQueue.py (LoginHandler.Connect): Changed socket connect code
+	to use a non-blocking connect.  This allows the client to remain
+	functional while the server is being contacted.
+
+1998-10-16  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empCmd.py (EmpParse.CmdAlias): Included support for rudimentary
+	alias substitutions.
+
+** Version 0.27a released.
+
+1998-10-15  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empEval.py (evalString): Completed much of the change-over to
+	the new eval syntax.  Now, eval works more similar to empire
+	selectors.  In fact, they now both share the same underlying
+	architecture.  This redesign was done to speed up the client side
+	synthetic commands; it is now significantly faster.
+
+	* empTk.py (mainWin.Error): Changed the internal error messages
+	from being flash'd out to a new method "Error".  The flash
+	messages were getting a little overused - this way errors will be
+	much more distinct.
+
+	* empQueue.py (NormalHandler.handleFlush): Added support for the
+	chained viewer method "Answer", and changed the format of the
+	"flush" method.  Now subprompts will be answered by calling a
+	handler passed to the flush method.  This allows for tracking of
+	sub-prompt answers via the Answer() method, and it allows nicer
+	handling of update aborted commands.
+
+	* TeleWin.py (teleWin.DoAbort): Added the ability to abort a reply
+	to a telegram/announcement.
+	(teleWin.redraw): Forced telewindow to scroll to the bottom during
+	a telegram update.
+
+	* empTk.py (mainWin.data): Added support for beeping/highlighting
+	in the Tk interface.  These additions may be temporary depending
+	on the CPU hit it takes; I will have to see some profiling info
+	first.  However, they do look to pretty simple so there is a good
+	chance they will stay.
+	(mainWin.hdl): Moved the prompt marking code from empDb to empTk.
+	This is more OO, but it may cause a CPU hit.  This is also
+	experimental.
+	(mainWin.DoLocateSector): Extended DoLocateSector to work with
+	arbitrary text output windows.  Also added hooks to the
+	telewin/outwin windows to use this hook.  It is now possible to
+	point-and-click to a sector from any output window.
+
+1998-10-12  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empTk.py (mainWin.__init__): Added a binding to the output
+	window which will force the window to go to the end of the output
+	after any resizes.
+
+	* empQueue.py (EmpIOQueue.AddHandler): The queue will no longer
+	automatically connect when only a client-side synthetic command is
+	issued.
+
+	* empire.py (SText.pathPrefix): Added support for a command-line
+	option '-n' which will prevent automatic connection upon starting
+	the client.
+
+	* empQueue.py (LoginHandler.line): Moved the sending of the
+	startup scripts first.emp/start.emp/connect.emp from
+	empire.py/viewer class to this function.  This location is much
+	more suited to an OO design.
+
+	* empTk.py (mainWin.main): Added support for dynamic opening of
+	the Login window via the command 'Login'.  Changing the login
+	parameters dynamically is experimental and error prone.
+
+	* LoginWin.py (loginWin): Added new buttons 'Disconnect' and
+	'Reset DB'.  The Disconnect button allows the connection to be
+	terminated at will, and the Reset Database button will wipe out an
+	existing database.  Both of these buttons are experimental, and
+	will probably brake a lot of code.
+
+** Version 0.26a released.
+
+1998-10-08  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* CenWin.py (cenWin.__init__): Added ability to locate the
+	'default'/'hide' options dynamically via function binding.  This
+	allows the 'dist' field to hide depending on the current sector's
+	x/y location.
+	(cenWin.toggleStart): Altered the way the 'stop' field was
+	displayed.  Now 'stop' is always seen, and button-1 will toggle
+	it's value.
+
+	* empire.py (initialize): Added special option '-x' which will
+	force the interface into Tk graphics mode.  This is done for
+	debugging purposes - it prevents reverting to the text interface
+	when a true source code error is occurring.
+
+1998-10-07  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empEval.py: Added new file.  empEval will contain the routines
+	necessary to allow arbitrary execution of python expressions on
+	the fields of the internal database.
+
+1998-10-03  Kevin O'Connor  <koconnor@gagarin.cs.Buffalo.EDU>
+
+	* empQueue.py (SyncHandler): Added new class specifically for sync
+	commands - "dump" commands.  This is a total hack, but it allows
+	for "dump" commands to "drop-out" when they are redundant.
+
+	* empDb.py (ParseDump.End): The dump command will now only update
+	the timestamp _after_ the completed dump.  This way, there is no
+	chance a mis-fired dump can mess up the timestamps.
+
+1998-10-02  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empDb.py (ParseRelations.data): Fixed an apparent bug in the
+	ordering of arguments to the country name resolver.
+	(ParseDump.data): Added a special hack to force a conversion of
+	'*' in the sector dump to an 'oldown' field.  Similarly, added a
+	special hack for support of the 'name' field in sdump.
+
+	* TeleWin.py (teleWin.DoSend): Added support for replying to
+	telegrams.
+
+1998-10-01  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empDb.py (ParseRead.flush): Included support for an automatic
+	refresh after a flush.
+
+	* TeleWin.py (teleWin): Added support for actually sending replies
+	to announcements.
+
+	* MapWin.py (mapSubWin.DoSelect): Fixed bug that prevented ranges
+	from being selected from a "Map" window.
+	(mapSubWin.DoCensor): Allowed a button-1 press to cancel a range
+	in progress.
+
+	* empTk.py (mainWin.markSectors): Added support for marking
+	sectors in multiple Map windows.
+
+	* MapWin.py (mapSubWin.redraw): Made the unit marking code support
+	different marks for owned/enemy units.  Made the positions of
+	these marks more programmable.
+
+	* empire.py (initialize): Added support for the getopt module.
+	The client now supports a better form of command-line options
+	checking.
+	(pathPrefix): Added full support for multiple path checking when
+	searching for initialization files.
+
+	* MapWin.py (mapSubWin.redraw): Fixed bug that was preventing the
+	sector decorations from being deleted.
+
+1998-09-30  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* empire.py (initialize): Improved the error reporting for a
+	failed Tk initialization.
+	(SText): Added dummy markSectors command to prevent exceptions.
+
+1998-09-29  Kevin O'Connor  <koconnor@armstrong.cs.Buffalo.EDU>
+
+	* CenWin.py (cenWin.newWin): Altered the censor window sector
+	highlights so that it follows the selection in the units windows.
+
+	* empTk.py (mainWin.DoLocateSector): Fixed an apparent bug in the
+	locate sector function.
+
+	* CenWin.py (cenWin.SectorCensus): Added support for
+	point-and-click deliver directions.
+
+	* empDb.py (ParseSpy): No longer supports "Spies report enemy"
+	syntax.  It now supports the keywords "Enemy" or "Neutral".
+	(composeHeader): Improved the header parsing routine a little.
+	(ParsePathSetting): Added a new class to detect simple prompts.
+
+	* OutWin.py (SimpDisp.__init__): The output window now sets the
+	default grid for the window.
+
+	* empDb.py (ParseBuild): Included support for detecting recently
+	built ships.
+	(ParseUnits.data): Added support for the view option.  The
+	database will now be updated with the sector's ocontent/fert data.
+
+	* empCmd.py: Moved the routines corresponding to the Tk interface
+	from this file to empTk.

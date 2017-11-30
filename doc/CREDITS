@@ -1,0 +1,27 @@
+Bernhard Reiter has been working with the client since the earliest beta
+release.  He has provided many suggestions and reported numerous bugs.  He
+has also been play testing the client on other platforms, such as Windows
+NT.  By providing input on many of the early beta and alpha releases, he
+has played an important role in the crucial beginning stages of
+development.  His continual support in debugging code and validating new
+releases is a great asset.
+In addition to his role in the development, Berhnard has played the leading
+role in the client's promotion and distribution.  Without Bernhard's help,
+you probably would not be reading this now.
+
+
+Much praise should go to the developers of the empire server.  Without
+their continued support this client would server no purpose.  In
+particular, the current developers of the Wolfpack source have answered
+many questions, and have directly aided the development by providing a
+permanent home for this client on their FTP site.
+
+
+Ulf Larsson has graciously donated the multi-move tool.  He has also
+provided a bestpath algorithm that will certainly find uses in many future
+tools.  In addition to these code contributions, Ulf has been steadily
+divulging lots of cool features that are contained within his own client!
+
+
+This program uses the PMW (Python Mega Widgets) toolkit.  The PMW toolkit
+is available from: http://www.dscpl.com.au/pmw

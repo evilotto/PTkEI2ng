@@ -1,0 +1,304 @@
+<html> <title> Ptkei Tips Documentation </title> <body>
+<center><h1> Useful Hints </h1></center>
+
+This file is intended as a list of "useful things".  It isn't organized
+into any particular order, but its overall contents might be useful to
+players looking for more information on the advanced features in the
+client.
+
+
+
+<p> <hr> <a name="commandline">
+<h2> Command-line Usage:</h2> </a>
+
+There are a bunch of flags that may be issued to the client at startup.
+The client takes arguments of the following form:
+
+<p> Usage:
+<br>
+<kbd> empire.py [-a] [-p] [-t|-x] [-n] [-I &lt;<var>include directory</var>&gt;]
+	[&lt;<var>database filename</var>&gt;] </kbd>
+
+<p> The '-a' flag activates the visual assistance parser. This makes
+     the client notify you when wilderness or a "?" (question mark) is detected - new
+
+<p> The '-p' flag activates the predict parser. This makes
+     the client display two extra lines at the end of the budget report
+    estimating new technology, research, education and happiness - new
+
+<p> The flag '-t' instructs the client to only use text mode.  When this
+flag is given, the Tk interface will not be contacted, and no graphical
+window will be opened.
+
+<p> Conversely, the flag '-x' instructs the client to only use the
+graphical mode.  Although it may appear that this is the default behavior,
+it differs slightly.  The default behavior is to attempt to load the
+graphical interface and then revert to text if that fails.  With the -x
+flag, if the graphic startup fails the client will abort with a full stack
+trace.  This option is only useful when debugging a graphical connection.
+
+<p> The '-n' flag prevents the client from automatically connecting to a
+server.  This can be used to bring the client and database up while
+remaining offline.
+
+<p> Any number of -I flags may be given to list a series of directories
+that will be prepended to the search path.  The search path is used to
+locate the standard initialization files: TkOption, first.emp, start.emp,
+connect.emp.  The default search path contains the current directory
+followed by the installation directory (the directory containing the
+empire.py file).  Since the default is usually sufficient, this option is
+not normally necessary.
+
+<p> At the end of the options list, the filename for a database may be
+given.  If this filename is specified then the empire database will be
+stored in this file.  Otherwise, the filename defaults to 'EmpDB'.
+
+
+
+<p> <hr> <a name="refresh">
+<h2> Refreshing the Display: </h2> </a>
+
+The client updates the map display using information gathered from user
+commands issued to the server.  There are two primary commands for
+gathering this data: dump commands, and map commands.  Normally, dump
+information is gathered via the <a href="commands.html#rdb">rdb</a> client
+command.  Unfortunately, there is no automated method for obtaining map
+information.  Normally the map information does not change, but
+occasionally it will be necessary to refresh the display.  To aid in this
+process, the default start.emp file contains an alias: maps.  The alias
+"maps" will issue a "map *" followed by the equivalent of a "radar *".
+
+<p> If the client is being used to connect to a country that has already
+expanded, it may be useful to issue a "bmap *" command.  Normally the
+client does not need to refresh a countries' bmap because most commands
+that update the bmap are parsed by the client directly.
+
+
+
+<p> <hr> <a name="selectors">
+<h2> Simulated Empire Selectors: </h2> </a>
+
+There are several local based commands that use a syntax that is similar to
+the empire server's selector interface (EG. "* ?civ>200").  The local
+commands <a href="commands.html#foreach">foreach</a>, <a
+href="commands.html#Sect">Sect</a>, and <a
+href="commands.html#mmove">mmove</a> can take sector selections of this
+form.  Although these selectors are similar to the server's they differ
+slightly, and are in general significantly more powerful.
+
+<p> Known incompatibilities:
+<ul>
+<li> When accessing the owner flag, owned objects are not reported using
+your numeric country id.  Instead all owned objects are always reported
+with a value of '-1'.
+
+<li> When accessing the oldowner flag, it is not really possible to get
+accurate information on the actual oldowner.  (This is a result of limited
+information in the dump command, and the fact that there is no practical
+way of obtaining oldowner from the server.)
+
+<li> The commodity deliver variables (EG. f_del) are not the same as the
+server's.  The server returns a numeric value that encodes both the
+direction and the cutoff.  This value isn't very useful, and I loathe to
+implement it just to be absolutely compatible.
+</ul>
+
+<p> Extended features:
+
+There are two additional selectors that may be used when issuing client
+commands:
+<dl>
+<dt> sect
+<dd>
+	is equivalent to a combination of xloc, and yloc; an ascii string
+	representing the current sector in "x,y" form.
+
+<dt> dist
+<dd>
+	is equivalent to a combination of xdist, and ydist; an ascii string
+	representing the sector's distribution sector.
+</dl>
+
+<p> It is also possible to embed python expressions in these selectors.
+For example, the command "foreach * ?civ>mil*2" will run the command on all
+sectors that have more civs than twice the number of mil in them.  In
+general, any python expression may be used as long as there are no white
+spaces and there are no occurrence of the ampersand character ('&') in the
+expression.
+
+
+
+<p> <hr> <a name="burst">
+<h2> To burst, or not to burst: </h2> </a>
+
+For users unfamilliar with the internals of the Ptkei client, it may not
+seem obvious the differences between bursting commands and synchronizing
+them.  What follows is a few simple tips on deciding when to use each of
+the modes.
+
+<dl>
+<dt>
+<h3> Bursting allows multiple commands to be sent and processed much
+faster.</h3>
+<dd>
+
+For example, try sending the following command in normal mode:
+<br>
+<kbd> foreach -10:10,-5:5 foreach -10:10,-5:5 echo [sect]</kbd>
+<br>
+(The objective of this command is to send a few hundred echo commands to
+the server.)  You should notice the command-line window scroll down as echo
+commands are sent and their output is displayed.
+
+<p> The above output may appear as fast, but there is a much faster way.
+Feel free to clear the outgoing queue (via the Queue-Options menubutton
+located on the bottom of the screen - the text showing something like
+"213/1".)  Now send the command:
+<br>
+<kbd> burst foreach -10:10,-5:5 foreach -10:10,-5:5 echo [sect]</kbd>
+<br>
+The client will probably "freeze" for a second or two before returning with
+all the echo commands fully processed.  (Use the scrollbar to review the
+output.)  The simple addition of the word "burst" probably improved the
+performace a hundred times or more.
+
+
+<dt>
+<p> <h3>Internals of burst</h3>
+<dd>
+
+In normal mode, each pending command is sent to the server only after the
+client receives a command-line prompt from the previous command.  In this
+mode the client only sends a command after the server has confirmed that it
+is ready to receive a command.
+
+<p> Unfortunately, this synchronization incurs a lot of latency.  The
+client and server are both idling while the network is transmitting the
+input and output.  Burst works by sending multiple commands to the server
+without waiting for the server to respond with a command prompt.
+
+<p> By removing the synchronization checks the client elliminates a lot of
+latency.  It is important to note that burst does not improve the speed of
+individual commands.  Instead it improves the time needed to process a
+large number of commands.
+
+
+<dt>
+<p> <h3> Burst'ed commands are less stable </h3>
+<dd>
+
+If burst makes sending multiple commands faster, why not send all commands
+in burst mode?  Try sending the following command:
+<br>
+<kbd> burst map ; update </kbd>
+<br>
+Expert empire players will immediately recognize that map requires an
+argument.  The above command will send "update" to the map's sup-prompt.
+This is probably not what is desired.  More importantly, there is no way
+for the client to predict when this will occur, to avoid it, or to recover
+from it.
+
+<p> If an unexpected sub-prompt appears in the middle of a series of
+bursted commands, subsequent commands will end up answering the sub prompt.
+This will probably result in the original command failing, or worse,
+prompting the user for appropriate action with another sub-prompt (which
+will also be inappropriately answered by any pending bursted commands).  In
+a nutshell, if an unexpected sub-prompt occurs in a long series of bursted
+commands, the whole series will probably be seriously corrupted.
+
+
+<dt>
+<p> <h3> Burst is useful when using commands with known sub-prompts.</h3>
+<dd>
+
+Since Burst is too unpredictable when sending multiple commands that have
+unpredictable sub-prompts, burst becomes most useful when sending a series
+of commands that have entirely predictable sub-prompts.  For example, in an
+earlier example, hundreds of echo commands were sent simultaneously to the
+empire server.  Because echo is known to have no sub-prompts, it is a good
+candidate for bursting.
+
+<p> Most commands have very predictable prompts, but others are not as
+clear.  The "move" command is a good example of a command that should
+probably never be burst'ed.  (A move command could cause enemy interdiction
+which causes unpredictable sub-prompts.)  Other "unstable" commands include
+navigate, march, transport, explore, attack, etc.
+
+<p> The area where burst becomes most powerful, is when used in select
+macros and aliases.  Often these aliases are very predictable, and the
+speed benefit of using burst is noticeable.  For example, internally the
+rdb command, and the telegram/announcement sender use this feature to
+significantly improve performance.  Also, the default "start.emp" file
+defines many macros that utilize burst.
+
+
+<dt>
+<p> <h3> Burstall mode.</h3>
+<dd>
+
+The Gui interface has a "BurstAll" mode capability.  (Available from the
+queue options menu.)  When this mode is enable, all commands typed in from
+the keyboard will be sent to the server immediately and no synchronization
+is performed.  This mode can be useful when connecting to a slow server.
+(Generally most connections have decent bandwidth, but often have high
+latency.)  I do not recommend this mode for most connections, as no
+improvement will be noticed unless you can type faster than the connection.
+
+
+<dt> <p> <h3> Miscellaneous warnings.</h3>
+<dd>
+
+<p> When using burst or burstall mode, it is important to know that all
+lines will be treated by the client as if they were regular commands.
+Lines that are known to be sub-prompts to the user are not know to be
+sub-prompts by the client.  If they look like aliases or internal commands
+they will be processed by the client!  It is important to plan out the
+client's aliases so that they do not conflict with possible empire prompts.
+
+<p> Most local commands set their own burst flags.  For example, the
+command "burst rdb" will have no effect - the "rdb" command is hardwired to
+use its own method.
+
+<p> Due to a known design error, the text interface will become hung if a
+bad series of burst commands are sent.  Whenever a local command that sets
+its own burst flags is sent where the server is expecting a sub-prompt, the
+client becomes hopelessly lost waiting for the answer to the sub-prompt.
+For example, the sequence "burst map; rdb" will cause the text client to
+hang.  (The GUI client will become confused, but not entirely hung as it is
+still possible to manually click on the sub-prompt window and type in a
+response.)
+<br>
+Because of this problem, there is no burst-all mode for the text-only
+client.
+
+</dl>
+
+
+<p> <hr> <a name="origin">
+<h2> Don't use the origin command: </h2> </a>
+
+The empire server supports a command call "origin".  This origin command
+can change the virtual coordinate system of a country.  After using this
+command, all further map, dump, and information commands will use different
+coordinates.  Unfortunately, there is no practical way for a "smart" client
+to gracefully handle these types of coordinate shifts.
+
+<p> Ptkei has been hardwired to block transmission of the origin command.
+
+<p> Fortunately, there isn't a real need to have this command available.
+When using the graphical interface, the "origin" of all of the graphical
+maps can be seamlessly changed by pressing the right mouse button on a
+sector.
+
+<p> However, if one really desires to run the server command, it can still
+be done using the <a href="commands.html#raw">raw</a> command.  For
+example, the command <kbd>raw origin 2,0</kbd> would prevent client
+intervention.
+
+<p> In all likelihood, if an origin command does make it to the server,
+then the local database will need to be completely reset.  This can be done
+by either removing the database file manually, or selecting the reset
+option from the Login window.
+
+
+</body> </html>

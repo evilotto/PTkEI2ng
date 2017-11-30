@@ -1,0 +1,17 @@
+!!! Windows specific Tk Options file
+
+!!! This file is loaded after the main TkOption file.  It is intended to
+!!! provide support for per-platform customization.
+
+*Entry.font	:	Courier -15
+*Text.font	:	Courier -15
+*Listbox.font	:	Courier -15
+
+*Entry.background	:	#c0c0c0
+*Text.background	:	#c0c0c0
+
+!! Set the default map size to have a height of 5 inches.
+Ptkei.mapframe.sectors.height		:	3i
+
+!! Set the default server window to have a height of 15 lines.
+Ptkei.iobox.height			:	15

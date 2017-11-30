@@ -1,0 +1,25 @@
+PENDING IDENTIFIED BUGS LIST
+
+* When the BIG_CITY option is enabled, sector 'c' are called 'city'
+  instead of 'capital' and thus are not recognised.
+
+* Efficiency prediction is wrong when the sector needs lcms and hcms
+  to increase its efficiency.
+
+* When taking a sector, all enemy land units that were present in that
+  sector are either destroyed or move to some other sector.  Thus they
+  at least should be removed from the list.
+
+* Due to the configuration of Python 2.1 on Debian, when a non ascii
+  character is entered it raises an exception.
+
+FEATURES TO BE ADDED
+
+* Improve the 'remove' command so that the user can use a classic unit
+  specification such as 'remove land #1' or 'remove ship * ?own#-1'.
+
+* Add a keyboard shortcut to switch between the various left panels.
+  This issue could be solved differently.  Basically, I seldom use the
+  unit panel except to get the list of the units present in a sector.
+  Maybe could we add this list at the bottom of the sector display.
+

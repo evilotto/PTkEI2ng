@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+    <title> Ptkei README Documentation </title>
+    <style type="text/css">
+      h1 { text-align: center; }
+      td { width: 33%; }
+      .centered { text-align: center; }
+      pre { margin-left: 4em; }
+    </style>
+  </head>
+  <body>
+
+    <h1>The Python/Tk Empire Interface</h1>
+
+<p>Welcome to the Python/Tk Empire Interface.</p>
+
+<p>The Python/Tk Empire Interface (which is often referred to as
+PTkEI) is a python based interpretive client for the empire server. </p>
+
+<p>This documentation refers to release 2.00.0 <br> The release date
+for the 2.00.0 version is April 27, 2013. </p>
+
+    <p>This client is distributed under the terms of the GNU GPL.</p>
+
+<p> Author: Kevin O'Connor
+      <br>Current maintainer: William Fittge </p>
+
+
+
+    <h2>Introduction and Availability</h2>
+
+    <p>This program enables you to play modern variants of the mighty
+    empire game over the Internet.  Empire is a real-time war game
+    that has a long tradition.  At the time of this writing, the
+    Empire Homepage can be located at: <a
+    href="http://www.wolfpackempire.com/"> http://www.wolfpackempire.com</a>. You can
+    find out about Empire and currently running servers here.  This is
+    also the place to download PTkEI and other clients.
+
+    <p>This program is a client only.  If you are not familiar with
+    Empire and the Empire server, then you will definitely need to
+    read the <a href="http://www.wolfpackempire.com">empire</a> documentation
+    in addition to the client documentation. </p>
+
+    <p> The most recent development versions of this client can
+    currently be found at: <a
+    href="http://sourceforge.net/projects/ptkei2/">http://sourceforge.net/projects/ptkei2/</a>
+
+    <h2>Installation</h2>
+
+    <p>In order to run this client, you must have the Python
+    interpreter installed on your system.  The interpreter must be
+    version 2.2 or later. </p>
+
+    <p>In order to use the graphical portions of this client, you must
+    have the Tcl/Tk libraries installed, and you must have a version
+    of Python that is configured to work with Tk. </p>
+
+    <p>To obtain the Python interpreter and Tcl/Tk libraries, see the
+    instructions located at the main Python web site: <a
+    href="http://www.python.org/"> http://www.python.org/ </a> </p>
+
+    <h2>Quick Start</h2>
+
+    <p>For the highly impatient, these are the files that I downloaded
+    when testing the client: </p>
+
+    <h3>Windows Users</h3>
+
+    <p>Go to the <a href="http://www.python.org/">Python</a> web site
+    located in the <a href="http://www.python.org/download/">download
+    section</a> and download the file <a href="http://www.python.org/ftp/python/2.2.1/Python-2.2.1.exe">Python-2.2.1.exe</a>. </p>
+
+    <p> After installing the python distribution, unpack the PTkEI
+    archive, and double click on the file 'empire.py' to run the
+    client. </p>
+
+    <h3>Linux RedHat Users</h3>
+
+    <p>The RedHat Manhattan distribution (5.1) and later comes bundled
+    with python.  Simply unpack the PTkEI archive and run the command
+    'empire.py'.
+
+    <h3>Other Unix Users</h3>
+
+    <p>If python is not already installed, it will probably be
+    necessary to compile the source code.  Check out the <a
+    href="http://www.python.org/download/">Python download page</a>,
+    it has the source code and install directions.  When compiling, be
+    sure to activate the Tk interface in the Python distribution's
+    Modules/Setup file; it is not on by default. </p>
+
+    <h3>Macintosh Users</h3>
+
+    <p>These instructions are available courtesy of Dan DEOCAMPO:
+
+    <ol>
+      <li>Download and install python from their website (www.python.org?)
+      <li>Download ptkei.
+      <li>Click "empire.py" and drag it onto the icon that says "Make Applet"
+	that should have been installed by Python.  This creates the
+	executable application "empire".
+      <li>Click "empire", and "get info" (from the File menu up top of
+	screen), and increase the memory allocation (I use 15 megs just to
+	be safe, but I'm sure you could use less).
+      <li>Double click "empire" and you're in - host address window asks you
+	where to connect.  I'm sure there's an easier way to deal with it,
+	but when I want to change to a different host, I throw out the file
+	"EmpDB" before I double-click empire. (Authors Note:  This should
+	no longer be necessary - try using the Load/Save buttons from the
+	Login window.)
+    </ol>
+
+    <h2>Available Platforms</h2>
+
+    <p>Currently, this client has been tested on Win95, Win98, WinNT,
+    Win2000, Win7, Win8, Macintosh and a variety of Unix machines.  The client should be
+    functional on other platforms as well.  If Python is available for
+    the platform and it supports the Tcl/Tk interface, it should be
+    able to run.  Please let me know if you succeed or fail at any
+      attempted installations. </p>
+
+    <h2>Running the Client</h2>
+
+    <p>Once you have verified that Python is properly installed,
+    unpack the client and 'cd' into the client directory.  Included in
+    the distribution should be the file 'empire.py'.  This file should
+    be executable; simply run the file to start the client.  (If this
+    causes problems, try running the command '<kbd>python
+    empire.py</kbd>'.)
+
+    <p>Optionally, the client may be invoked using the syntax,
+    'empire.py &lt;<var>filename</var>&gt;' to specify a file to store
+    the database in.  (If no name is specified, the file defaults to
+    'EmpDB'.)  In addition to specifying the database filename, a
+    number of additional options may be provided.  Please see the <a
+    href="TIPS.html#commandline">command-line</a> section of the TIPS
+    file for more information.
+
+    <p>If the server disconnects the client because of an inactivity
+    timeout or because of a 'bye' command, the client will idle until
+    the next command is issued (at which time PTkEI will automatically
+    reconnect).  To exit the client, you must close the main window
+    via the window manager.
+
+    <p>When a database is first initialized the client will prompt for
+    server and country information.  The database file will recall
+    this information for future connections.  If you change these
+    values using the 'change' command, you will have to enter the new
+    values the next time the client attempts to reconnect.
+
+    <p>PTkEI can also be run without a graphical display.  Reverting
+    back to a text interface is highly unrecommended and nearly
+    unsupported.  In a crunch, however, the client will operate nearly
+    identically to the standard empClient.  (A graphical connection is
+    automatically used when available; the client will only revert to
+    text when no graphics are permitted or when there is an error
+    connecting to the display.)
+
+
+    <h2>Taking Over The World</h2>
+
+    <p>The client should be fairly simple to operate.  All keystrokes
+    are sent directly to the command-line like most other Empire
+    clients.  However, this client will 'automagically' parse output
+    from dump, map, and many other commands.  It will then seamlessly
+    update the graphical displays.  To refresh these displays, simply
+    send new map/dump commands.  There is also a built-in command
+    ('rdb') that will issue dump commands that make use of the new
+    Wolfpack 4.0 timestamps.  'rdb' dumps only those sectors that have
+    recently changed - it is the recommended interface to the dump
+    command.  See the <a href="TIPS.html#refresh">Refreshing</a>
+    section of TIPS.html for more information.
+
+    <p>Currently, the graphical interface includes a scrollable map
+    window, a selectable censor window, a telegram and annoucement
+    window, and several other 'nifty' features.
+
+    <p>There are a few 'smart' features available.  Please see the
+    file <a href="commands.html">commands.html</a> for a description
+    of these commands.  The GUI functions are described in <a
+    href="gui.html">gui.html</a>.  Other miscellaneous information can
+    be found in the <a href="TIPS.html">TIPS.html</a> file.
+
+
+    <h2>Troubleshooting</h2>
+
+    <p>If there are problems starting the client, then it may be
+    necessary to debug the Python and/or Tk installations.  I
+    recommend reading the section titled 'Troubleshooting' at the web
+    page: <a
+    href="http://www.python.org/topics/tkinter/">http://www.python.org/topics/tkinter/</a>.
+    The idea is to start the python interpreter manually (usually by
+    running '<kbd>python</kbd>' from a command prompt), and type in
+    the command '<kbd>import Tkinter</kbd>' followed by the command
+    '<kbd>Tkinter._test()</kbd>'.  If a window pops up, then the
+    Python/Tk setup is probably ok, otherwise there is an error
+    somewhere in the installation.
+
+    <p>Also, if the client is running under Windows, be sure to read the
+section located at: <br> <a
+href="http://www.python.org/topics/tkinter/download.html#autoexec">
+http://www.python.org/topics/tkinter/download.html#autoexec </a> <br> This
+link describes the process of adding TCL to the standard PATH variable at
+boot time.
+
+
+<h2> Contacting the Author: </h2>
+
+    <p>This client has been written by Kevin O'Connor.  It is
+    currently maintained by William Fittge (<a
+    href="mailto:ptkei2@gmail.com">ptkei2@gmail.com</a>).
+
+    <p>Most requests can be asked in the empire newsgroup.  This
+    newsgroup <a href="news://rec.games.empire">rec.games.empire</a> is
+    dedicated to answering questions about empire and empire clients.
+    Much useful information can be gathered from this source.  
+
+
+
+    <h2>Legal Issues</h2>
+
+<pre>
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+
+</body> </html>

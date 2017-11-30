@@ -1,0 +1,255 @@
+!!! Default TkOption file:
+!!! This file is used to specify default options for the Python/Tk Empire
+!!! interface.
+
+!!! Note:  Lines that begin with a '!' are comments, and are ignored.
+
+!! This file is parsed by the Tk interface itself.  This means that just
+!! about any Tk option/feature can be set using this file.  Most attributes
+!! like font/foreground/background/etc. can be set for just about any object.
+!! You may want to tinker with the settings to get a feel for what can be set.
+!! This file should follows the same format as a .Xdefaults file under
+!! X-Windows.
+
+!! On some platforms, it may be necessary to specify a fixed font.  I
+!! highly recommend the following entries be uncommented, and adjusted with an
+!! acceptable font size.  (In the following example, 'Courier' is the name
+!! of a font, and '-12' is the size.)
+!*Entry.font	:	Courier -12
+!*Text.font	:	Courier -12
+!*Listbox.font	:	Courier -12
+
+!! Set the default map size to have a height of 5 inches.
+Ptkei.mapframe.sectors.height		:	5i
+
+!! Set the default server window to have a height of 15 lines.
+Ptkei.iobox.height			:	15
+
+!! The following comments are examples on how to color specific types of
+!! server output.
+Ptkei.iobox.inverse_background		:	black
+Ptkei.iobox.inverse_foreground		:	white
+!Ptkei.iobox.data_background		:	green
+!Ptkei.iobox.data_borderwidth		:	2
+!Ptkei.iobox.data_relief			:	ridge
+!Ptkei.iobox.data_bgstipple		:	gray12
+Ptkei.iobox.prompt_background		:	yellow
+Ptkei.iobox.prompt_bgstipple		:	gray12
+!Ptkei.iobox.command_fgstipple		:	gray50
+!Ptkei.iobox.flush_overstrike		:	1
+Ptkei.iobox.flush_background		:	green
+Ptkei.iobox.flush_bgstipple		:	gray12
+!Ptkei.iobox.subcommand_underline	:	1
+Ptkei.iobox.flash_background		:	grey
+Ptkei.iobox.error_foreground		:	red
+
+!! Specialized colors for certain items in the censor window.
+Ptkei.infoframe.fSector.resources.off.value.foreground	:	red
+Ptkei.infoframe*resources.owner*foreground		:	red
+Ptkei.infoframe.fSector.resources.oldown*foreground	:	red
+Ptkei.infoframe.fSector.resources.fallout*foreground	:	purple
+
+!! To alter all "wind ..." popups, use lines similar to the following:
+!Ptkei.Output.Text.font		:	   fixed
+
+!! It is possible to alter "wind XXX ..." output windows for each XXX
+!! specified.  For example, you could set specific entries just for "wind info
+!! ..." commands.  (The client will automatically locate the first word
+!! following the wind command, convert it to lowercase, and search for
+!! specialized options.)  An example:
+!Ptkei.Output.info.height	:	30
+!Ptkei.Output.info.width	:	85
+
+!! It is also possible to set settings for the cshow commands.  The cshow
+!! command is essentially an output window with the name cshow.  An example:
+!Ptkei.Output.cshow.foreground	:	black
+!Ptkei.Output.cshow.background	:	grey
+
+
+
+!! Map items:
+
+!! Colors for the graphical map windows:
+Ptkei*Map.sectors.background	:	white
+!Ptkei*Map.sectors.background	:	black
+Ptkei*Map.sectors.defaultSize	:	18 16
+
+!! When Size reaches combatmodeStartSize (like when zooming into additional
+!! "Map" windows) details of units/ships/planes/nukes are displayed 
+Ptkei*Map.sectors.combatModeStartSize	:	70 70
+Ptkei*Map.sectors.combatModeFont	:	Courier8
+
+!!!!!!!  Sector items !!!!!!!
+
+!! Class definition for sector markings
+Ptkei*Map.sectors.Sector_type	:	polygon
+Ptkei*Map.sectors.Sector_coords	:	-.9455 -.4375 0.0000 -.9375 \
+					0.0555 -.9375 1.0000 -.4375 \
+					1.0000 0.5000 0.0555 1.0000 \
+					0.0000 1.0000 -.9455 0.5000
+Ptkei*Map.sectors.Sector_fill	:	\ 
+Ptkei*Map.sectors.SectorText_type		:	text
+Ptkei*Map.sectors.SectorText_coords		:	0 0
+
+!! Definitions for sector markings
+Ptkei*Map.sectors.ownedSector_outline	:	green
+Ptkei*Map.sectors.nomobSector_outline	:	green
+Ptkei*Map.sectors.nomobSectorText_fill	:	grey
+Ptkei*Map.sectors.enemySector_outline	:	red
+Ptkei*Map.sectors.unownedSector_outline	:	grey
+Ptkei*Map.sectors.unknownSector_outline	:	black
+Ptkei*Map.sectors.seaSectorText_fill	:	black
+Ptkei*Map.sectors.seaSector_type	:	polygon
+Ptkei*Map.sectors.seaSector_coords	:	-.9455 -.4375 0.0000 -.9375 \
+						0.0555 -.9375 1.0000 -.4375 \
+						1.0000 0.5000 0.0555 1.0000 \
+						0.0000 1.0000 -.9455 0.5000
+Ptkei*Map.sectors.seaSector_fill	:	azure
+Ptkei*Map.sectors.seaSector_stipple	:	\ 
+Ptkei*Map.sectors.seaSector_outline	:	\ 
+Ptkei*Map.sectors.mineSectorText_fill	:	black
+Ptkei*Map.sectors.mineSector_type	:	polygon
+Ptkei*Map.sectors.mineSector_coords	:	-.9455 -.4375 0.0000 -.9375 \
+						0.0555 -.9375 1.0000 -.4375 \
+						1.0000 0.5000 0.0555 1.0000 \
+						0.0000 1.0000 -.9455 0.5000
+Ptkei*Map.sectors.mineSector_fill	:	yellow
+Ptkei*Map.sectors.mineSector_stipple	:	\ 
+Ptkei*Map.sectors.mineSector_outline	:	\ 
+
+!! Ulf Larsson's preferred settings
+!!
+!! (You will need to comment out my settings above (Map and Sector items) 
+!! for this to work.)
+!Ptkei*Map.sectors.defaultSize	:	7.0 8.0
+!Ptkei*Map.sectors.Sector_type	:	polygon
+!Ptkei*Map.sectors.Sector_coords:	-.9 -.4 0 -.9 .9 -.4 .9 .4 0 .9 -.9 .4
+!Ptkei*Map.sectors.Sector_outline	:	\ 
+!Ptkei*Map.sectors.SectorText_type		:	text
+!Ptkei*Map.sectors.SectorText_font		:	6x10
+!Ptkei*Map.sectors.SectorText_coords		:	0 0
+!
+!Ptkei*Map.sectors.ownedSector_fill	:	gold
+!Ptkei*Map.sectors.nomobSector_fill	:	yellow
+!Ptkei*Map.sectors.enemySector_fill	:	red
+!Ptkei*Map.sectors.seaSector_fill	:	blue2
+!Ptkei*Map.sectors.unownedSector_fill	:	gray95
+!Ptkei*Map.sectors.unknownSector_fill	:	grey
+!Ptkei*Map.sectors.seaSectorText_type	:	\ 
+
+!!!!!!!!!!  Units  !!!!!!!!!!!!
+
+!! Class definitions for units/enemyunits
+Ptkei*Map.sectors.Unit_type		:	rectangle
+Ptkei*Map.sectors.Unit_outline		:	\ 
+Ptkei*Map.sectors.EnemyUnit_type	:	oval
+Ptkei*Map.sectors.EnemyUnit_outline	:	\ 
+
+Ptkei*Map.sectors.landUnits_coords	:	.433 -.6 .233 -.4
+Ptkei*Map.sectors.enemyLandUnits_coords	:	.533 -.5 .333 -.3
+Ptkei*Map.sectors.ships_coords		:	-.233 -.4 -.433 -.6
+Ptkei*Map.sectors.enemyShips_coords	:	-.133 -.5 -.333 -.7
+Ptkei*Map.sectors.planes_coords		:	-.233 .6 -.433 .4
+Ptkei*Map.sectors.enemyPlanes_coords	:	-.533 .5 -.333 .3
+Ptkei*Map.sectors.nukes_coords		:	.433 .6 .233 .4
+Ptkei*Map.sectors.enemyNukes_coords	:	.533 .5 .333 .3
+Ptkei*Map.sectors.landUnits_fill	:	brown
+Ptkei*Map.sectors.enemyLandUnits_fill	:	SaddleBrown
+Ptkei*Map.sectors.ships_fill		:	blue
+Ptkei*Map.sectors.enemyShips_fill	:	NavyBlue
+Ptkei*Map.sectors.planes_fill		:	pink
+Ptkei*Map.sectors.enemyPlanes_fill	:	DeepPink
+Ptkei*Map.sectors.nukes_fill		:	thistle
+Ptkei*Map.sectors.enemyNukes_fill	:	thistle2
+
+!!!!!!!!!! Origin  !!!!!!!!!!!!
+
+Ptkei*Map.sectors.origin_type	:	line
+Ptkei*Map.sectors.origin_coords	:	-.5 -1 -.5 .75 1 .75
+Ptkei*Map.sectors.origin_fill	:	grey
+Ptkei*Map.sectors.origin_width	:	2
+
+Ptkei*Map.sectors.capital_type		:	polygon
+Ptkei*Map.sectors.capital_coords	:	0.000 -.750 0.235 -.324 \
+						0.713 -.232 0.380 0.124 \
+						0.441 0.607 0.000 0.400 \
+						-.441 0.607 -.380 0.124 \
+						-.713 -.232 -.235 -.324
+Ptkei*Map.sectors.capital_outline	:	gold
+Ptkei*Map.sectors.capital_fill		:	\ 
+
+!!!!!!! Oldowner Marks  !!!!!!!!!!!
+
+!! How to calculate values for the small filled circle
+!! 	Origin=(0,0) is the middle of each sector. 
+!!	x axis is horizontal  positive numbers are to the right
+!!	y axis is vertical    positive numbers are to the bottom
+!!	x,y = center of the circle
+!!      rx  = horizontal radius
+!!      ry  = vertical radius
+!!	(to get a circle you need to match the aspect ratio with rx/ry. 
+!!	See entry for Ptkei*Map.sectors.defaultSize. Default is 3/4 )
+!!	Then the values for the "oval" Tk-type are calculated as following:
+!! x=0 y=0+0.45 rx=0.08  ry=0.06   x+rx=0.08 y-ry=0.39 x-ry=-0.08 y+ry=0.51
+Ptkei*Map.sectors.Oldowner_type		:	oval
+Ptkei*Map.sectors.Oldowner_coords	:	-.08 0.54 .08 0.70
+Ptkei*Map.sectors.Oldowner_outline	:	\ 
+
+!! Color for enemy populaton in your sectors
+Ptkei*Map.sectors.oldownerEnemy_fill		:	red
+
+!! Color for my own people in enemy sectors -- green
+Ptkei*Map.sectors.oldownerMyself_fill		:	green
+!! Color for my own people in enemy sectors -- darkgreen
+!Ptkei*Map.sectors.oldownerMyself_fill		:	darkgreen
+
+!! Color for other people in enemy sectors
+Ptkei*Map.sectors.oldownerUnknown_fill		:	grey
+
+!!!!!!!!!!   Marks !!!!!!!!!!!!
+
+!! Class definition for markers.
+Ptkei*Map.sectors.Mark_type	:	oval
+Ptkei*Map.sectors.Mark_coords	:	-0.75 -0.75 0.75 0.75
+Ptkei*Map.sectors.Mark_outline	:	grey
+
+!! Marker for the censor window's selected sector.
+Ptkei*Map.sectors.mark_type	:	polygon
+Ptkei*Map.sectors.mark_coords	:	-.8333 -.3750 0.0277 -.8125 \
+						      0.8888 -.3750 \
+					0.8888 0.4375 \
+					0.0277 0.8750 -.8333 0.4375
+Ptkei*Map.sectors.mark_fill	:	\ 
+Ptkei*Map.sectors.mark_outline	:	black
+Ptkei*Map.sectors.mark_width	:	3
+
+!! Marker for the "Disp" Command
+Ptkei*Map.sectors.disp_type	:	polygon
+Ptkei*Map.sectors.disp_coords	:	-.8333 -.3750 0.0277 -.8125 \
+						      0.8888 -.3750 \
+					0.8888 0.4375 \
+					0.0277 0.8750 -.8333 0.4375
+Ptkei*Map.sectors.disp_fill	:	red
+Ptkei*Map.sectors.disp_stipple	:	gray12
+Ptkei*Map.sectors.disp_outline	:	red
+Ptkei*Map.sectors.disp_width	:	4
+
+!! Marker for the "Sect" Command -- new style grey stippled 
+Ptkei*Map.sectors.sect_type	:	polygon
+Ptkei*Map.sectors.sect_coords	:	-1 -.5 0 -1 1 -.5 1 .5 0 1 -1 .5
+Ptkei*Map.sectors.sect_fill	:	black
+Ptkei*Map.sectors.sect_stipple	:	gray12
+Ptkei*Map.sectors.sect_outline	:	\ 
+
+!! Marker for the "Sect" Command -- old style orange circle
+!Ptkei*Map.sectors.sect_outline :       orange
+
+!! Markcolor for subprompts
+Ptkei*Map.sectors.prompt_outline	:	purple
+
+
+!! Move marks
+Ptkei*Map.sectors.destSector_type	:	oval
+Ptkei*Map.sectors.destSector_coords	:	-.5 -.5 .5 .5
+Ptkei*Map.sectors.destSector_outline	:	grey
+Ptkei*Map.sectors.destSector_width	:	3

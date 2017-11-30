@@ -1,0 +1,9 @@
+# first.emp -- This file is sourced each time a new database is
+#	    created.  Place commands here that should be run once each
+#	    time a new server is connected.
+
+## Parse version to find the worldsize
+## Parse nation for country identification
+## Enable inform
+## Get all the realms
+null burst version; nation; toggle inform on; toggle techlists on; realm; show sector stat; show sector build

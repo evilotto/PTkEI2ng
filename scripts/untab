@@ -1,0 +1,20 @@
+:
+# Simple script that removes all trailing whitespace (tabs and spaces) from
+# the standard input or a specified file.  It also compresses all leading
+# tabs to spaces.
+
+# Created by Kevin O'Connor.
+
+if [ "$1" = "" ]; then
+    sed -e 's/[	 ]*$//' -e ':rep
+			   { s/^\(	*\)	/\1        /
+			     t rep
+			     }'
+else
+    mv "$1" "$1.strip!"
+    sed -e 's/[	 ]*$//' -e ':rep
+			   { s/^\(	*\)	/\1        /
+			     t rep
+			     }' < "$1.strip!" > "$1"
+    rm "$1.strip!"
+fi

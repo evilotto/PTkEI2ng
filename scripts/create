@@ -1,0 +1,10 @@
+:
+
+# Simple script to create a Pmw.pyc file from a PMW 0.8 distribution.
+
+# Created by Kevin O'Connor.
+
+rm Pmw.py
+./bundlepmw.py /usr/src/Pmw/Pmw_0_8/lib/
+./dummyfunc.py
+mv Pmw.pyc ../src

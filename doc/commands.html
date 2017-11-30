@@ -1,0 +1,946 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii">
+    <title>Ptkei Command Documentation</title>
+    <style type="text/css">
+      h1 { text-align: center; }
+      td { width: 33%; }
+      .centered { text-align: center; }
+      pre { margin-left: 4em; }
+    </style>
+  </head>
+  <body>
+    <h1>Command-line Features</h1>
+
+    <table>
+	<tr>
+	  <td valign="top">
+	    <p class="centered"><strong>Basic Commands</strong></p>
+ 	    <ul>
+	      <li><a href="#alias">alias</a> - Generate
+		a definition for a simple alias
+	      <li><a href="#burst">burst</a> - Send commands unsynchronized
+	      <li><a href="#coordinate">coordinate</a> - Translate coordinates 
+	      <li><a href="#danno">danno</a> - Dump all announcements</li>
+	      <li><a href="#dtele">dtele</a> - Dump all telegrams</li>
+	      
+	      <li><a href="#execute">execute</a> - Send the content of a
+		  file to the empire server.
+	      <li><a href="#ltest">ltest</a> - Compute the mobility
+		needed to move a land unit. 
+	      <li><a href="#null">null</a> - Run command with no output
+
+	      
+	      <li><a href="#origin">origin</a> - Block unsupported command
+	      <li><a href="#projection">projection</a> - Show commodities needed to build new units
+	      <li><a href="#raw">raw</a> - Send a command without
+	      client interpretation 
+	      <li><a href="#rdb">rdb</a> - Refresh client databases	      
+	      <li><a href="#remove">remove</a> - Remove foreign units
+	      from the database.
+	      <li><a href="#execute">runfeed</a> - Send the output of a
+		system command to the empire server.
+	    </ul>
+	  </td>
+	  <td valign="top">
+	    <p class="centered"><strong>Tk Windows Commands</strong></p>
+	    <ul>
+	      <li><a href="#cshow">cshow</a> - Hack for show command.</li>
+	      <li><a href="#Disp">Disp</a> - Highlight specified sector on main map using a color gradient</li>
+	      <li><a href="#Login">Login</a> - Re-open the login window</li>
+	      <li><a href="#Map">Map</a> - Open an additional graphical map window</li>
+	      <li><a href="#Sect">Sect</a> - Highlight specified sectors on main map</li>
+	      <li><a href="#wind">wind</a> - Output command to a new Tk Window</li>
+	      <li><a href="#wread">wread</a> - Graphical correspondence tool</li>
+	    </ul>
+
+	    <p class="centered"><strong>Information Commands</strong></p>
+
+	    <ul>
+	      <li><a href="#define">define</a> - List all online commands</li>
+	      <li><a href="#out">out</a> - Debugging tool - dumps database</li>
+	    </ul>
+
+	  </td>
+
+	  <td valign="top">
+	    <p class="centered"><strong>Smart Commands</strong></p>
+	    <ul>
+	      <li><a href="#dmove">dmove</a> - Move commodity around up to distribution thresholds</li>
+	      <li><a href="#eval">eval</a> - Evaluate an expression
+	      for a sector</li>
+
+	      <li><a href="#foreach">foreach</a> - Run given command
+	      on specified sectors</li>
+
+	      <li><a href="#mmove">mmove</a> - This command produces a
+		best-path multimove</li>
+	      
+	      <li><a href="#Mover">Mover</a> - Issue a multi-stage
+	      move</li>
+
+	      <li><a href="#nova">nova</a> - Explore adjacent
+	      wilderness sectors</li>
+
+	      <li><a href="#Predict">Predict</a> - Get predictions for
+	      a sector</li>
+	      
+	      <li><a href="#setfood">setfood</a> - set food thresholds</li>
+	    </ul>
+	  </td>
+	</tr>
+	
+    </table>
+
+
+    <p>This file is intended to give a brief summary of the "smart"
+    commands available in the Python/Tk empire client.</p>
+
+    <p> Each of the following commands may be entered as if they were
+    a normal empire server command.  The client will automatically
+    recognize these commands and handle them locally, where
+    applicable. </p>
+
+    <p> In addition to commands that are typed in on the command line,
+    commands can also be specified in three built-in configuration
+    files.  The file, "first.emp" is executed the first time the
+    client connects to the server, "start.emp" is run every time the
+    client starts up, and the file "connect.emp" is run each time a
+    connection is made to the server. </p>
+
+    <p> Important Change!  Previous versions of the client had a
+    command known as "sync".  This command has be renamed to "rdb",
+    and its syntax has been altered! </p>
+
+    <hr>
+
+    <h2>Basic Commands</h2>
+
+    <h3><a name="rdb">Command rdb</a></h3>
+
+    <h4>Syntax</h4>  
+
+    <pre>rdb</pre> 
+
+    <h4>Description</h4>
+
+    <p>This command is used to keep the sector/ship/plane/nuke/etc
+    databases synchronized.  When this command is issued
+    dump/sdump/pdump/ldump/lost commands will be buffered to the
+    server.  Empire 4.x timestamps are used to ensure only recently
+    updated values are returned.  It is a good idea to use this
+    command instead of manually running dump yourself. </p>
+
+    <p> At one time, the server had a bug that caused empire updates
+    to modify sectors and units without updating the timestamps.  To
+    circumvent this problem, 'rdb' was expanded to use the form
+    'rerdb'.  A "re-refresh" will force this command to ignore
+    timestamps and dump the entire database.  It should not be
+    necessary to use this form of the command. </p>
+
+    <p> Additionally, the command rdb (or rerdb) may contain a suffix
+    that contains any combination of 'epslno'.  'e' stands for sector
+    dump, 'p' is a plane dump, 's' is a ship dump, 'l' is a land dump,
+    'n' is a nuke dump, and 'o' is a lost dump.  When these selectors
+    are specified, only the corresponding dumps will be sent.  This is
+    useful when it is known which databases have changed, and it is
+    not desirable to dump all the databases.  For example, you might
+    specify 'rdbel' to synchronize just sectors and land units. </p>
+
+    <p> During processing of the outgoing command queue, if two or
+    more rdb commands are buffered simultaneously, the client will
+    automatically ignore the first database refresh.  Since the first
+    refresh is contained entirely within the second, it doesn't make
+    much sense to send the first.  When this behavior is not desired,
+    the rdb command can be suffixed with a "P" flag.  This prevents
+    the first rdb command from being ignored. </p>
+
+    <h3><a name="null">Command null</a></h3>
+
+    <h4>Syntax</h4>
+    <pre>null &lt;cmd&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>Send &lt;cmd&gt; to server, but don't display its
+    output on the command-line.  The output will still be parsed by
+    the internal parsers.  For example, "null map *" will update the
+    graphical display without flooding the output window. </p>
+
+    <h3><a name="multicmd">Multi Command Line</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>&lt;cmd1&gt; ; &lt;cmd2&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>This command allows multiple commands to be sent on the same
+    line.  For example, "map * ; bmap *" will send "map *" followed by
+    "bmap *". </p>
+
+    <h3><a name="redir">Redirections</a></h3>
+
+    <p>These  commands redirect the output of an empire command. </p>
+
+    <pre>&lt;cmd&gt; | &lt;program&gt;</pre>
+    <p>Send output of &lt;cmd&gt; to the system command
+		&lt;program&gt;</p>
+
+    <pre>&lt;cmd&gt; &gt; &lt;file&gt;</pre>
+
+    <p>Store output of &lt;cmd&gt; in new file called
+    &lt;file&gt;</p>
+
+    <pre>&lt;cmd&gt; &gt;! &lt;file&gt;</pre>
+
+    <p>Store output of &lt;cmd&gt; in file named
+    &lt;file&gt;, overwriting an existing file if any. </p>
+
+    <pre>&lt;cmd&gt; &gt;&gt; &lt;file&gt;</pre>
+
+    <p>Store output of &lt;cmd&gt; at the end of the file
+    &lt;file&gt; </p>
+
+
+    <h3><a name="execute">Commands execute &amp; runfeed</a></h3>
+
+    <h4>Syntax</h4>
+    
+    <pre>execute &lt;file&gt;</pre>
+
+    <pre>runfeed &lt;program&gt;</pre>
+
+    <p>These commands allow server commands to be collected in an
+    external source.  When processing the commands, lines beginning
+    with a "#" are considered comments and are silently ignored.  All
+    other lines are interpreted as client or server commands.
+
+    <p>The "execute" command may be abbreviated to as short as "exe".
+    This command is intended to mimic the effects of the similar
+    server based command.
+
+
+    <h3><a name="alias">Command alias</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>alias &lt;cmd&gt; &lt;newcmd&gt;</pre>
+
+    <p>All future invocations of &lt;cmd&gt; will
+    automagically be altered to send &lt;newcmd&gt;
+    instead.  Optionally, the alias may contain special substitution
+    characters.  When evaluating, the sequence $* is substituted with
+    the command's arguments, $X is substituted for the Xth word of the
+    command's arguments ($0 will be replaced by the command name), and
+    $$ is replaced by a single $ character.  For example, the command
+    &quot;alias mvoe move $*&quot;, makes mvoe function exactly like
+    move.
+
+    <p>To make an alias permanent, place the alias command in the
+    start.emp file.  There are also many examples of aliases in this
+    file.
+
+    <p><strong>Note:</strong> There is no protection from infinitely
+    recursing aliases.  If an alias calls itself it will probably end
+    up hanging the client!
+
+    <p><strong>Note2:</strong> When in <a href="TIPS.html#burst">burst
+    mode</a> aliases may also be evaluated for sub-prompts.  Because
+    of this, it is a good idea to plan out aliases that don't easily
+    conflict with common empire sub-prompts.
+
+    <h3><a name="burst">Command burst</a></h3>
+    
+    <pre>burst &lt;cmd&gt;</pre>
+
+    <p>The burst command can be used to send a series of commands to
+    the server without synchronizing the output.  Synchronizing output
+    can incur a significant amount of latency.  By "bursting" multiple
+    commands simultaneously, a significant improvement can be made to
+    the overall connection speed.  Unfortunately, when multiple
+    commands are "bursted", it becomes possible for a command to
+    accidently answer the preceding command's sub-prompt.  This
+    utility is most powerful when it is applied to commands whose
+    sub-prompts (or lack of sub-prompts) can be entirely predicted.
+
+    <p><strong>Note:</strong> The internal parser will parse bursted commands!
+
+    <p>Simple examples:</p>
+
+    <dl>
+      <dt><kbd>burst tele 4;Hi there.;What's up?;.</kbd>
+      <dd>
+	This command will burst the 4 lines of data ('tele 4', 'Hi there.',
+	'What's up?', and '.').  Because telegram has predictable
+	sub-prompts, it is safe to assume that the above will tele 4 with
+	the included message.
+
+      <dt><kbd>burst nation;version;update;map *</kbd>
+      <dd>
+	This command will send the four specified commands simultaneously.
+	Because nation, version, and update never take sub-prompts, and
+	because map has a predictable sub-prompt - It is safe to assume
+	that these commands will execute properly.
+    </dl>
+
+    <p> For a more in depth analysis, see the <a
+    href="TIPS.html#burst">burst section</a> in the TIPS file.  There
+    are also a number of examples in the default start.emp file.
+
+    <h3><a name="coordinate">Command coordinate</a></h3>
+    
+    <h4>Syntax</h4>
+    
+    <pre>coordinate [-]&lt;country number&gt; &lt;your coordinate&gt; [&lt;their coordinate&gt;] </pre>
+
+    <h4>Description</h4>
+    
+
+    <p>The coordinate command can be used to set a countries coordinates
+    that can be used to translate from your coordinates to theirs.  
+    Also it will translate from theirs to yours
+   by using a '-' (minus sign) in front of the country number.
+        Setup the translation by entering
+    <br>coordinate &lt;country number&gt; &lt;your coordinates&gt; &lt;their coordinates&gt;<br>
+        Translate from yours to theirs by entering
+    <br>coordinate &lt;country number&gt; &lt;your coordinates&gt;<br>
+    it will display country number and the coordinates translated into theirs.  
+        Translate from theirs to yours by entering
+    <br>coordinate -&lt;country number&gt; &lt;their coordinates&gt;<br>
+    It will display the country number and the coordinates translated into yours.  
+
+    <h3><a name="origin">Command origin</a></h3>
+
+    <h4>Syntax</h4>
+    
+    <pre>origin</pre>
+
+    <h4>Description</h4>
+
+    <p>Block unsupported server command.</p>
+
+    <p>The server origin command is not supported by the client.  To
+    prevent accidental error, this command will be blocked before
+    transmission to the server.  Please see the <a
+    href="TIPS.html#origin">origin section</a> of the TIPS.html file
+    for more information.
+
+
+    <h3><a name="raw">Command raw</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>raw &lt;cmd&gt;</pre>
+
+    <p>Normally, all commands typed in are checked for client
+    synthetic commands and aliases.  The raw command can be used to
+    prevent this check.  When using this command, everything following
+    "raw" will be sent to the server completely unmodified.
+
+    <p><strong>Note:</strong> The client will still parse the output
+    from commands that are sent raw!
+
+    <p><strong>WARNING!</strong> In raw mode, it is possible to send
+    the command "exec" to the server.  The client does not support the
+    server's exec protocols.  If exec is sent in raw mode, it may
+    become necessary to disconnect via the Login Window to reset the
+    client's connection.
+
+    <h3><a name="remove">Command remove</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>remove (l|s|p) &lt;sects&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>Sometimes foreign units are still present in the database while
+    they're not visible anymore or have been destroyed.  The "remove"
+    command allows the user to remove such units. Example:
+
+    <p><code>remove&nbsp;s&nbsp;*</code> will remove all foreign ships
+    from the database.
+
+    <p><code>remove l #1</code> will remove all land units from realm
+    1.
+
+    <h3><a name="dtele">Command dtele</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>dtele</pre>
+
+    <h4>Description</h4>
+
+    <p>All telegrams sent or received are copied to the screen or can
+    be redirected to a file with the usual rediction operators.
+
+    <p><code>dtele >! tele.txt</code> will send all telegrams to the
+    file 'tele.txt'. </p>
+
+    <h3><a name="danno">Command danno</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>danno</pre>
+
+    <h4>Description</h4>
+
+    <p>All announcements sent or received are copied to the screen or
+    can be redirected to a file with the usual rediction operators.
+      
+    <p><code>danno >! anno.txt</code> will send all announcements to
+    the file 'anno.txt'. </p>
+
+    <h3><a name="projection">Command projection</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>projection</pre>
+
+    <h4>Description</h4>
+
+    <p>This command tells you if one or more of your sectors needs
+    more commodity, availibility to build all your units (ships,
+    planes and land units).  You need to have issued a 'show
+    ship|plane|land build' before.</p>
+
+    <p>Some examples:</p>
+
+    <pre>[71:640] Command : projection
+Building Projections
+====================
+[71:640] Command : 
+</pre>
+    <p>It seems that you're not building anything this update!</p>
+
+
+<pre>[72:637] Command : projection
+Building Projections
+====================
+<font color="#ff0000">You should issue a 'show plane build' command to update the database</font>
+[72:637] Command : </pre>
+
+    <p>The type of planes you're building isn't present in your
+    database: You've never issued a 'show plane build' or maybe you
+    did but so long ago that this new plane type didn't exist at that
+    time.  You must send a 'show plane build' to get all plane types. </p>
+
+    <pre>[75:636] Command : projection
+Building Projections
+====================
+Sector 6,2 is ok.
+[75:636] Command : </pre>
+
+    <p>Sector 6,2 has all needed commodity to build your units. </p>
+
+    <pre>75:635] Command : projection
+Building Projections
+====================
+Sector 7,-1 needs 59 more lcm
+Sector 7,-1 needs 5 more mil
+Sector 6,2 is ok.
+[75:635] Command : </pre>
+
+    <p>Sector 7,-1 (an airport) needs 59 more lcms and 5 more mils to
+    make all the planes located there 100%. </p>
+
+    <h3><a name="ltest">Command ltest</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>ltest &lt;unit ID&gt; &lt;sector&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>The <strong>ltest</strong> command behaves just like the
+    <strong>test</strong> except that it applies to a land unit as
+    shown in the example: </p>
+
+    <pre>[133:630] Command : ltest 329 -5,-5 
+Looking for best path to -5,-5
+Using best path 'yyyyygy', movement cost 1.601
+Total movement cost cost: 80, new mob: 47</pre>
+
+    <h2>Tk Window Commands</h2>
+
+    <p>What follows is a quick summary of the Tk based commands.  Many
+    of these commands are further documented in the <a
+    href="gui.html">gui.html</a> file.
+
+      <h3><a name="wind">Command wind</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>wind &lt;cmd&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>Send &lt;cmd&gt; to server, pop-up a new window on
+    the desktop, and redirect all output from the command to this
+    window.  For example, the command "wind info Products" would send
+    that 20 page manual to its own window with its own scrollbar.
+    This window can then be left up for future reference; it will not
+    interfere with sending and receiving of additional empire
+    commands.  An unlimited number of these output windows may be used
+    simultaneously.
+
+    <h3><a name="wread">Command wread</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>wread</pre>
+
+    <h4>Description</h4>
+
+    <p>The internal parsers automatically store incoming telegrams,
+    incoming announcements, and outgoing telegrams.  Sending this
+    command will pop up a graphical telegram window which allows
+    reviewing and responding to these messages.
+
+    <p><strong>Note:</strong> If you are short on disk space, you may
+    have to use this tool to delete old telegrams and announcements
+    from the database.  Since the client automatically stores old
+    messages, the database can become rather large over time.
+
+    <h3><a name="Map">Command Map</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>Map</pre>
+
+    <h4>Description</h4>
+      
+    <p>This command will pop up an additional graphical map in its own
+    desktop window.  An unlimited number of these map windows may be
+    used simultaneously, and each map window can have its own origin
+    and scale. </p>
+
+    <h3><a name="cshow">Command cshow</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>cshow &lt;'ship'|'land'|'plane'&gt;</pre>
+    
+    <h4>Description</h4>
+    
+    <p>This command will send "show X build; show X cap; show X sta"
+    and rearrange the output into multiple columns.  A Tk window will
+    pop up with the resulting formatted display.
+
+
+    <h3><a name="Login">Command Login</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>Login</pre>
+
+    <h4>Description</h4>
+
+    <p>This command forces the Tk interface to re-open the Login
+    window.  When connected to a server, the login window may be used
+    to force a disconnect.  When not connected to a server, the Login
+    window can be used to alter database, server, and country
+    information.
+
+    <h3><a name="Sect">Command Sect</a></h3>
+    
+    <h4>Syntax</h4>
+
+    <pre>Sect &lt;sectors&gt; [&lt;selectors&gt;]</pre>
+
+    <h4>Description</h4>
+      
+    <p>This command locally emulates the empire server's sect command.
+    It can be used to mark sectors on the graphical map that meet a
+    provided empire selector.  It is intended to work similar to the
+    server based "sect" command.
+
+    <p><strong>Note:</strong> This command uses the internal database
+    to determine which sectors apply.  If the database is not
+    synchronized, the results will not be correct!
+
+    <p>The arguments to sect work in the same manner as the foreach
+    command which is described below.
+
+    <p>Optionally, you may run the Sect command with no arguments at
+    all to erase the highlights from any past Sect commands.
+
+    <h3><a name="Disp">Command Disp</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>Disp &lt;commodity&gt; &lt;sectors&gt; [&lt;selectors&gt;] [min &lt;min value&gt;] [max &lt;max value&gt;]</pre>
+
+    <h4>Description</h4>
+
+    <p>This commands highlights selected sectors using a color
+    gradient depending on the level of the commodity specified.  If
+    the &lt;min value&gt; is set all levels below it are seen as if
+    they were egal to this &lt;min value&gt;.  The same applies for
+    the &lt;max value&gt;.
+      
+    <p>Like the Sect command, Disp uses the internal database.  
+
+    <p>You may run the Disp command without any arguments to erase the
+    highlights from any past Disp commands.
+      
+    <h2> Smart Commands</h2>
+
+    <h3><a name="eval">Command eval</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>eval nation|version|&lt;sect&gt; &lt;cmd&gt;</pre>
+		
+    <h4>Description</h4>
+
+    <p>This command allows a command to contain python expressions
+    that are evaluated using the nation database, the version
+    database, or a sector database.
+
+    <p><strong>Note:</strong> This command uses the internal database.
+    If the database is not synchronized, the results will not be
+    correct!
+
+    <p>&lt;sect&gt; is a sector designation of the form x,y.  (Note,
+    if you wish to run a programmable-command on many sectors, use the
+    foreach command.)  This sector's database is referenced when
+    evaluation the rest of the command.
+
+    <p>&lt;cmd&gt; is an empire command that contains an arbitrary
+    number of python expressions embedded within it.  The python
+    expressions must be enclosed within [ and ] characters (the square
+    brackets).  These python expressions are evaluated using a
+    namespace from the specified database.  The names of the variables
+    are the same as their corresponding empire selectors, and similar
+    to the empire selectors they may be abbreviated (for example, both
+    'newdes' and 'new' are equivalent).  In addition to the standard
+    empire selectors, there are two included aliases: sect (A string
+    containing the sector's x,y pair), and dist (A string containing
+    the dist_x,dist_y pair).  See the <a
+    href="TIPS.html#selectors">selectors section</a> of the TIPS file
+    for more information.
+
+    <p>An example:
+
+    <dl>
+      <dt><kbd> eval 0,0 move mil [dist] [mob/2+1-mil] [sect] ; anti
+	  [sect]</kbd>
+
+      <dd>In this example, enough mil is pulled in from sector 0,0's
+      dist center so that the maximum number of mil usable in an anti
+      command is available.  The anti command is then executed.
+    </dl>
+
+
+    <h3><a name="foreach">Command foreach</a></h3>
+
+    <h4>Syntax</h4>
+    
+    <pre>foreach &lt;sectors&gt; [&lt;selectors&gt;] &lt;cmd&gt; </pre>
+
+    <h4>Description</h4>
+    
+    <p>Similar to the PEI foreach command, this command takes a sector
+    range, an optional
+    ?&lt;var&gt;=&lt;val&gt;&amp;... selector,
+    and then runs cmd on each sector that meets the requirements.
+
+    <p><strong>Note:</strong> This command uses the internal database.
+    If the database is not synchronized, the results will not be
+    correct!
+
+    <p>&lt;sectors&gt; and &lt;selectors&gt; are
+    similar to those on the empire server.  &lt;sectors&gt;
+    can be a range of sectors (x1:x2,y1:y2), an '*' to specify all
+    sectors, or an empire range of the form '#X'.
+    &lt;selectors&gt; is a series of variable conditions
+    that may be specified using the form
+    &quot;?&lt;var&gt;&lt;cond&gt;&lt;var&gt;&quot;
+    where &lt;var&gt; is a either a constant or a valid
+    empire variable, and cond is one of '=', '&lt;', '&gt;'
+    or '#'.  Any number of selectors may be specified by appending
+    them with a '&amp;' character in-between.  See the <a
+    href="TIPS.html#selectors">empire selectors</a> section of the
+    TIPS.html file for advanced information.
+
+    <p>&lt;cmd&gt; is a string that will be parsed in the
+    same manner as the eval command.
+
+    <p>An example:
+
+    <dl>
+      <dt><kbd> foreach * ?dust=1&amp;d_dist=0 move d [sect] 1 4,7 </kbd>
+      <dd>
+	The above command moves 1 dust to sector 4,7 from all sectors that have
+	exactly 1 dust and have no dust threshold.
+    </dl>
+    
+    <p>A more complex example:
+    <dl>
+      <dt><kbd> foreach * ?mil&lt;50 move mil [dist] [50-mil] [sect] </kbd>
+      <dd>
+	The above attempts to resupply all sectors from their respective dist
+	centers so that all sectors have a minimum of 50 mil.
+    </dl>
+    
+    <p>An insane example:
+    <dl>
+      <dt> <kbd> foreach * move gun [10&gt;gun and dist+' '+`10-gun`+'
+      '+sect or sect+' '+`gun-10`+' '+dist] </kbd>
+      <dd>
+	The above moves guns around so that exactly 10 guns are in
+	every sector.  Sectors that have more than 10 guns in them
+	move guns to their dist centers; sectors with less than 10
+	guns move guns from their dist sectors.
+    </dl>
+
+    <h3><a name="nova">Command nova</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>nova &lt;civ|mil&gt; &lt;start sector&gt; [&lt;to sector&gt;]</pre>
+
+    <h4>Description</h4>
+
+    <p>The start sector has to be an owned sector that contains
+    mobility and civs/mil.  If [to sector] is specified, it
+    must be an owned sector that is adjacent to unowned wilderness.
+    (If [to sector] is not specified then start
+    sector must be adjacent to unowned wilderness.)  Explore
+    commands are then generated from the start sector to all adjacent
+    wilderness sectors.  No best path is calculated.
+
+
+    <p><strong>Warning:</strong> This command is experimental!  Do not
+    use it in important situations.  (But it might be useful in
+    blitzes.)  It uses the internal database, which has to be
+    synchronized.
+
+    <h3><a name="mmove">Command mmove</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>mmove &lt;commodity&gt; &lt;source sectors&gt; &lt;min level&gt; &lt;mobility&gt; &lt;dest sectors&gt; &lt;max level&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>Invoking mmove will generate a series of commands that attempt
+    to move the commodity specified by &lt;commodity&gt; from the
+    sectors in &lt;source sectors&gt; so that there is &lt;max
+    level&gt; of the commodity in all the sectors in &lt;dest
+    sectors&gt; such that all source sectors will not go below &lt;min
+    level&gt; of the commodity and not go below &lt;mobility&gt;
+    mobility.. Phew..
+
+    <p>Ok, an example:
+
+    <dl>
+      <dt><kbd> mmove food * 60 40 * 60 </kbd>
+      <dd>
+      This moves food from sectors with more than 60 food to sectors with
+      less than 60 food.  At least 40 mobility will be left in every
+      sector.
+
+	<p>
+      <dt> <kbd> mmove civ #1 768 80 #2 ?new#+ 768 </kbd>
+      <dd>
+	This will attempt to move civs from sectors in realm 1 that have more
+	than 768 civs to sectors in realm 2 that have less than 768 civs and
+	are not road sectors.  At least 80 mobility is left in each sector.
+    </dl>
+
+    <p>The mmove utility is a contribution from Ulf Larsson.  Warning!
+    This code is still experimental!  Please use with discretion.
+
+    <h3><a name="dmove">Command dmove</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>dmove &lt;commodity&gt; &lt;source sectors&gt; &lt;mobility&gt; [zero] [&lt;dest sectors&gt;]</pre>
+
+    <h4>Description</h4>
+
+    <p>The dmove command behaves like mmove except that the commodity
+    levels used are the distribution thresholds. Unless the
+    <em>zero</em> argument is provided, a sector with no commodity
+    threshold (i.e. a threshold equal to zero) won't be included in
+    the source sectors. The difference between this command and mmove
+    is that each sector can have a different min level or max
+    level.</p>
+    
+    <h4>Examples</h4>
+
+    <dl>
+      <dt><kbd>dmove i * 67</kbd></dt> 
+
+      <dd>This command will generate a list of move commands from
+      sectors where the stock of iron is above the iron threshold (and
+      where the iron threshold is greater of equal to one) to sectors
+      where the stock of iron is below the iron threshold.  The amount
+      of iron in source sectors won't go below their iron thresholds
+      and in destination sectors it won't go above their
+      thresholds. </dd>
+    </dl>
+
+    <dl>
+      <dt><kbd>thr d * ?dust=1&amp;gold=0 0<br>rdb<br>dmove d * 67 zero</kbd>
+
+      <dd>The first command sets the threshold of sectors that used to
+      be gold mine where 1 dust is remaining to 0.  The second
+      refreshes the database.  Finally, the third one will move
+      commodity from these sectors to those where dust level is below
+      thresholds (for instance banks, tech centers). </dd>
+
+    </dl>
+    <h3><a name="Mover">Command Mover</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>Mover &lt;commodity&gt; &lt;amount&gt; &lt;sector list&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>The Mover utility moves amount of commodity from the
+first sector of sector list to the second sector of sector
+list, to the third sector, fourth sector, and so on until the
+commodity resides in the last sector of sector list .  The
+purpose of this utility is to move commodities around using way-points as
+mobility sinks.
+
+    <p> The amount field has a special meaning in this utility:
+      
+    <ul>
+      
+      <li>If amount is a normal number than it represents the amount
+      of the commodity that will reside in the last sector after a
+      successful move.  If amount is greater than the quantity in the
+      last sector then commodities will be moved to the first sector;
+      if amount is less, than commodities will be moved from the first
+      sector. </li>
+
+      <li>If amount is prefaced with a minus sign ('-'), than amount
+	represents an absolute move.  The amount specified will be moved
+	from the last sector to the first sector.
+
+      <li>If amount is prefaced with a plus sign ('+'), than amount
+	represents an absolute move.  This is identical to the above,
+	except the amount will be moved from the first sector to the last
+	sector.
+
+      <li>If amount is prefaced with an at sign ('@'), than it moves
+	commodities so that amount is left in the first sector.  This is
+	identical to the unsigned type, except the first sector's level is
+	used instead of the last sector.
+</ul>
+
+    <p><strong>Note:</strong> This command is still in its infancy.
+    Both it and the graphical move utility, which uses this command,
+    should be used with a little caution.  Also, this command has no
+    support for moves that cause enemy interdiction.  If interdiction
+    occurs, it will probably not do what you want.
+
+    <h3><a name="Predict">Command Predict</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>Predict &lt;sector&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>This command displays information about the effects of an
+    update on a sector.  On a graphical interface, this output is also
+    available in the Sector Census Window.  Currently, it supports
+    population growth statistics, starvation warnings, worker
+    information, and new efficiency data.
+
+    <h3><a name="setfood">Command setfood</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>setfood &lt;sector list&gt; [no] [force]</pre>
+
+    <h4>Description</h4>
+
+    <p>This command computes for each sector in <code>&lt;sector
+    list&gt;</code> the amount of food needed for full growth and sets
+    the food threshold depending of the options provided. </p>
+
+    <p>If no options are provided (e.g. <code>setfood *</code>), the
+    thresholds calculated are sent to the server only if they are
+    above current thresholds.  For instance, if a sector needs 35 food
+    and already has a food threshold of 60, no command is sent for
+    this sector.</p>
+
+    <p>If the <code>force</code> option if present (e.g. <code>setfood
+    * force</code>), the calculated thresholds replace current ones
+    even when they are inferior to them. </p>
+
+    <p>If the <code>no</code> option is present (e.g. <code>setfood *
+    no</code>), the calculated thresholds replace those present in the
+    internal database but aren't sent to the server. </p>
+
+    <p><strong>Note:</strong> A threshold command uses one BTU.  As a
+    threshold command is sent to the server for each sector in the
+    list, you may consume a lot of BTUs when using this command for a
+    large area. </p>
+
+    <p><strong>Note 2:</strong> The purpose of the options
+    <code>no</code> and <code>force</code> is to allow the use of the
+    <a href="#dmove">dmove</a> command to move food to sectors that
+    need it without spending hundreds of BTUs in the process. </p>
+
+    <p><strong>Note 3:</strong> When using the <code>no</code> option,
+    the internal database gets out of sync with the game.  You should
+    issue a <code>null dump * f_dist</code> command just after to
+    resync food threshods. </p>
+
+    <h4>Examples</h4>
+
+    <dl>
+      <dt><kbd>rdb<br>
+setfood * no<br>
+dmove f * 67<br>
+null dump * f_dist
+</kbd></dt>
+
+    <dd>First, we sync the database, Second, we set food thresholds in
+    the internal database.  Then the <code>dmove</code> command moves
+    food around to where it is needed.  As the internal database is
+    out of sync (at least regarding food thresholds), we force a
+    resync with the last command.  This serie of commands could be turned in to a single command with the <a href="#alias">alias</a> command: <br>
+<code>alias lsetfood rdb;setfood $* no;dmove f $* 67;null dump $* f_dist</code>
+      </dd>
+</dl>
+
+    <h2>Information Commands</h2>
+
+    <h3><a name="define">Command define</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>define</pre>
+
+    <h4>Description</h4>
+    
+    <p>You may obtain a list of all client commands that are currently
+    available by sending the command "define".
+
+    <h3><a name="out">Command out</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>out</pre>
+
+    <h4>Description</h4>
+
+    <p>Don't run this - it is only useful for debugging. (And not very
+    useful at that.)  It will send the entire database to the empire
+    console. </p>
+    
+  </body>
+</html>

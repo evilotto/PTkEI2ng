@@ -1,0 +1,41 @@
+The scripts directory contains a collection of Unix command-line scripts
+that I use to create the packages that I release.  These utilities are
+probably only useful if a distribution is being created, or if the sources
+are being heavily updated.  Normal users should probably just ignore this
+directory.
+
+The files in this directory:
+
+    create : This is a Unix shell script that will create the Pmw.pyc file
+	from a PMW distribution.  It uses the dummyfunc.py and bundlepmw.py
+	that are also in this directory.  This file needs a hard coded
+	location of the PMW sources - before running on another site it
+	will probably require altering.
+
+	For more information of PMW, see the PMW web site located at:
+		http://www.dscpl.com.au/pmw/
+	or look around www.python.org for information related to PMW.
+
+    bundlepmw.py : This is a modified version of the bundlepmw.py file that
+	comes with PMW 0.8.  It has been modified so that it creates a
+	minimal Pmw.py file.  It has also been modified to change the line
+	"_bltOK = 0" to "_bltbusyOK = 0" due to advise from Greg McFarlane
+	- the maintainer of PMW.
+
+    dummyfunc.py : A simple script that is used to convert a Pmw.py file to
+	a Pmw.pyc file.
+
+    snapshot : This is a Unix shell script that bundles all the necessary
+	files from the ptkei directory and creates a new tar file.  It
+	can automatically create time dated snapshots.  This script has
+	a hardcoded source directory - it will need to be edited before
+	using.
+
+    untab : Simple Unix script that converts all leading tabs to spaces.
+
+    stript : Simple Unix script that converts all leading whitespace to
+	tabs, and removes all excess end of line whitespace.
+
+NOTE: The only really useful scripts (create and snapshot) were not
+designed to be highly portable.  They are quick and dirty, and will need to
+be modified to suit your needs.

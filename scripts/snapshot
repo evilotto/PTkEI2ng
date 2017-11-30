@@ -1,0 +1,41 @@
+#!/bin/csh
+
+# Shell script that creates a snapshot of the ptkei sources.  If a command
+# line argument is given, it is used as the name of the archive.  If no
+# command line arguments are given the archive name is extracted from the
+# current date.
+
+# Created by Kevin O'Connor.
+
+set src_loc='/usr/src'
+set pck_loc='/usr/src/ptkei/archive'
+cd $src_loc
+if ("$1" == "") then
+    set name=ptkei-`date +%y%m%d`
+    set fullname=$pck_loc/$name
+    if (-e $fullname.tar.gz) then
+	@ vers=1
+	while (-e $fullname-$vers.tar.gz)
+	    @ vers++
+	end
+	set name=$name-$vers
+    endif
+else
+    set name=$1
+    set dozip
+endif
+
+mv ptkei $name
+
+set pck_loc="$name/archive"
+
+set files="$name/src/*.py $name/src/Pmw.pyc $name/*.emp $name/TkOption $name/TkOption.w32 $name/TkOption.x11 $name/empire.py $name/src/ChangeLog $name/COPYING $name/doc/CREDITS $name/doc/TODO $name/doc/*.html $name/doc/pics/*.gif $name/scripts/snapshot $name/scripts/create $name/scripts/bundlepmw.py $name/scripts/dummyfunc.py $name/scripts/README $name/scripts/stript $name/scripts/untab"
+set fullname=$pck_loc/$name
+
+echo "Building $fullname"
+tar cfz $fullname.tar.gz $files
+if ($?dozip) zip $fullname.zip $files
+
+mv $name ptkei
+
+#chmod go+r $fullname.*

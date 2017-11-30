@@ -1,0 +1,45 @@
+# start.emp -- This file is sourced each time the client starts up.
+#	    Place commands here that initialize the client.  (For example,
+#	    alias commands.)
+
+## Sample aliases:
+
+## Set common thresholds
+alias handy burst des * ?ne=g&go=0 +;des * ?ne=o&oc=0 +;thr d * ?ne=g&d_di=0 1;thr o * ?ne=o&o_di=0 1;thr i * ?ne=m&i_di=0 1;thr l * ?ne=j&l_di=0 1;thr h * ?ne=k&h_di=0 1;thr g * ?ne=d&g_di=0 1;thr s * ?ne=i&s_di=0 1; thr p * ?ne=%&p_di=0 1;rdbe
+
+## Simple alias for disting civs/mil
+alias setcivs eval nation thr c * ?ne#h&ne#w&c_di=0 [cmax]
+alias people burst setcivs;thr m * ?ne#h&ne#w&ne#e&m_di<15&mil<20&ow=ol&co=1 15;thr m * ?ne#h&ne#w&ne#e&m_di<5&mil<20&ow=ol&co=0 5;rdbe
+
+## Set some defaults for common sectors
+alias cthr burst thr m * ?ne=f&m_di<20&mil<60 60;thr l * ?ne=f&l_di=0 200;thr h * ?ne=f&h_di=0 200;thr s * ?ne=f&s_di=0 30;thr g * ?ne=f&g_di=0 7;thr p * ?ne=f&p_di=0 100;thr m * ?ne=*&m_di<20&mil<60 60;thr l * ?ne=*&l_di=0 200;thr h * ?ne=*&h_di=0 200;thr s * ?ne=*&s_di=0 300;thr p * ?ne=*&p_di=0 300;thr m * ?ne=!&m_di<20&mil<200 200;thr l * ?ne=!&l_di=0 200;thr h * ?ne=!&h_di=0 200;thr s * ?ne=!&s_di=0 100;thr g * ?ne=!&g_di=0 20;rdbe
+
+## Stupid macro to turn off unnecessary thresholds
+alias picky burst thr i * ?ne#m&ne#w&ne#h&ir=1&i_di=1 0;thr l * ?ne#j&ne#w&ne#h&lc=1&l_di=1 0;thr h * ?ne#k&ne#w&ne#h&hc=1&h_di=1 0;thr o * ?ne#o&ne#w&ne#h&oi=1&o_di=1 0;thr d * ?ne#g&ne#w&ne#h&du=1&d_di=1 0;thr s * ?ne#i&ne#w&ne#h&sh=1&s_di=1 0;thr g * ?ne#d&ne#w&ne#h&gu=1&g_di=1 0;rdbe
+
+## Stupider macro to move excess 1 commodities back to dist center
+alias clear_one foreach * ?$1_di=0&$2=1 move $1 [sect] 1 [dist]
+alias clear burst picky;rdbPe;clear_one i ir;clear_one l lc;clear_one h hc;clear_one o oi;clear_one d du;clear_one s sh;clear_one g gu;rdbe
+
+## The following is an example from Berhnard Reiter that I updated to use
+## programmable alias support:
+## designate all g mines; designate all oil fields
+alias newland burst des $1 ?ne=+&go>5 g;des $1 ?ne=+&oc>10 o;thr d $1 ?ne=g 1;thr o $1 ?ne=o 1;rdbe
+
+## Macro to refresh the map display
+alias maps null eval version burst map *;radar [-xmax/2]:[xmax/2-1],[-ymax/2]:[ymax/2-1]
+
+## Macros for use with the mmove tool:
+## civmvr <from realm> <to realm>
+alias civmvr eval nation mmove civ $1 ?civ>[cmax] [cmax] 67 $2 ?civ<[cmax] [cmax]
+
+## Handy read macro
+alias R read y
+
+## The client automatically stores the next update time in its internal
+## database.  However, it does not store the observed difference between
+## server time and local time.  Therefore, at least one command that
+## receives the server time should be sent to ensure the update timer is
+## accurate.  The command "update" is as good as any..
+null show sector stat
+null update

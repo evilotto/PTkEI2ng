@@ -1,0 +1,5 @@
+# connect.emp -- This file is sourced each time the client reconnects to
+#	    the server.  Place commands here that should be run frequently.
+
+## Resync the database with each connection.
+#rdb

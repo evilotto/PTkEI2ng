@@ -1,0 +1,206 @@
+This file is a list of things still left to be done in the client.  If you
+have additional ideas for the client or feel like implementing something,
+please feel free to email me at "koconnor@cse.buffalo.edu".
+
+If you are looking at a developers snapshot, many of the items may be
+preceded by one or more asterisk characters ("*").  This signifies that the
+project has been completed or mostly completed.
+
+This file is broken into three different sections:
+	Tk Stuff - All things specific to graphical operation.
+	Smart Features - Things related to "Smart" features in the client.
+	Underlying Support - Parsers, Sockets, and Database stuff.
+
+
+
+##############################
+	Tk Features:
+##############################
+
+Add a series of pull-down/popup menus to the client.  The "million-and-one
+mouse binding" approach can only go so far.  (It has already gone too
+far..)  By designing pull-down menus, the client will be more powerful and
+easier to use/learn.
+
+* Map Window major modes.  (Suggested by both Bernhard Reiter and Ulf
+Larsson.)  It would be nice if the map could be placed into a "move mode"
+that would rebind the mouse events to support point-and-click moving.
+Similarly, other modes could be described.
+
+* Add a high detail mode to the graphical map window - Suggested by
+Bernhard Reiter.  The idea is to show info like mil quantity, and detailed
+unit info on the map window.  Obviously, the sector size would have to be
+pretty large for this to work, but in combat situations this could be
+helpful.
+
+BUG: When the sector size of a map window is altered, changing origins (via
+the right click action) does not work properly.  Sometimes sector
+decorations and descriptions are not moved properly, which causes the map
+to get "littered" with misplaced information.
+
+Allow for dynamic binding of special key events.  Perhaps a command syntax
+like "bind ^s sync" could be designed.  This would make the client
+extremely customizable.
+
+It would be useful to include a persistent sect command.  Basically, it
+would operate similarly to "Sect", only when a database update occurs it
+would change the markings to represent the latest information.  The major
+obstacle to achieving this would be the processing of command-line requests
+to efficient python code.  Since the map window redrawing time is already
+significant, no additional overhead can really be tolerated.
+
+Variable sect markings.  It should be possible to issue a command like
+"sect * ?own#old [mil]" that would show bright markings around non oldowned
+sectors with lots of mil and dull markings around oldowned sectors with
+little mil.  Ulf Larsson has also expressed an interest in seeing this
+implemented.
+
+Possible redesign of the Censor Window.  After much consideration I have
+decided that I do not like the pseudo-notebook looking window approach.  I
+find that I use the sector window all the time, but almost never use the
+units windows.  I envision a new scheme where the top of the censor window
+shows details for sectors/units, and the bottom has a scrolling tree view.
+(It would be similar to the units censor windows, except instead of a
+scrolling list of just one unit, a hierarchical tree view of all objects
+would be in the list.)  The main benefit to this would be that units in a
+sector would be much more accessible.  (They would be highly viewable in
+the tree listing, and they would be just one click away to a detailed
+view.)
+
+Unit censor window should be programmable in some way.  Selection by fleet,
+location, type, etc. should be allowed.
+
+BUG: Fix problem with name in censor window.  If the name field becomes
+longer than the allotted space weird things happen.
+
+The login window could have a pull-down menu that would store a list of
+commonly used empire hosts/ports.  I'm really tired of having to look up
+the vampire blitz's IP address every time I wish to connect.
+
+Redo the color scheme.  During the development phase I simply choose colors
+that were easy to see.  Looking at the display now, I think they are all
+pretty ugly.  Since all of this is configurable in the TkOptions file, I
+would like to set new defaults that are more "eye pleasing".  (In
+particular, I really dislike displays that use white backgrounds - I almost
+always use a reverse-video setup.)
+
+Integrate the OutWin.py output window and the command-output window in the
+root window.  Currently, the root window supports beeping and highlighting,
+but the Output windows do not.  It would be helpful if both of these could
+be consolidated so that they both use the same code.
+
+The cshow command should work for nukes as well.  (It should be more
+flexible.)
+
+Graphical map ruler bars - Suggested by Bernhard Reiter.  If a sub-window
+within the map window contained coordinate numbers for the sectors, it
+would significantly improve the quality of the information presented within
+the display.
+
+It would be neat if the client had a graphical display mode where the
+sector designations were displayed using a set of bitmaps.
+
+When a sub-prompt is received, it may be useful to allow a programmable
+timer, dependent on the latest keystrokes to the normal command line,
+determine when to switch to the sub-prompt window.  The idea is, if the
+queue gets rather large, the user may not wish to have his normal commands
+start going to the sub-prompt window.  A timer (on the order of .2 seconds)
+could allow a fast typist to finish a command prior to switching over.  Of
+course, since most sub-prompts are generally avoided, this isn't really a
+pressing feature.
+
+
+
+##############################
+	Smart Features:
+##############################
+
+Automatic database refreshing should be added.  The client should also be
+able to tailor this to the user somewhat.  There should be an option to
+automatically update the database prior to a "smart" command and an option
+to automatically update the DB after user commands.  Also, there should be
+an option to disable the current scheme of automatically updating after
+certain "smart" commands.
+
+Foreach command should be able to work with ships/plane/units in addition
+to just sectors.
+
+Foreach should optionally allow an arbitrary python expression in addition
+to the x1:x2,y1:y2 ?modif syntax.  (IE something like: foreach [x>=4 and
+x<=14 and y>=5 and y<=23 and mil==5] echo [sect] in place of: foreach
+4:14,5:23 ?mil=5 echo [sect] )
+
+Add an option to the database class that will allow for automatic "wake"
+detection.  The idea is from a post about WinACE - basically, when enemy
+ships move around, the old locations are stored and time stamped.  This
+then gives the user the ability to see the ship's "wake".
+
+New smart commands such as PEI's nova and simu tools would make a great
+addition to the client.
+
+
+
+##############################
+	Underlying Support:
+##############################
+
+Parsers, Parsers, parsers.  There should be a parser for everything!  In
+particular, parsing for mines would be helpful.
+
+It may be useful to avoid pre-checking for pipes and redirects, in favor of
+using the standard server protocol.  (With proper security checks of
+course!)  The idea is, that if the queue conversion is ever completed, then
+no distinction will have to be made between possible sub-prompts with |,
+and > characters, and real redirects..
+
+Perhaps design a more high-level approach to parsing composite command
+output.  Right now, there is exactly one default parser defined per
+command.  (A parser can be called by many different commands, but each
+command currently has at most one parser.)  Although this is ideal for most
+commands, certain output is duplicated in multiple places.  For example, a
+map/bmap can be received from a M/B command at a nav sub-prompt.
+Similarly, plane interdiction messages can be received during a move or
+during a telegram message.  Obviously, it would be difficult to merge the
+telegram and move parsers together - they for the most part have nothing to
+do with each other.  Similarly, the map and navigation stuff really don't
+have much in common.  Ideally, some kind of daemon viewer class could be
+engineered that would direct output to sub-viewer classes.  (The sub-viewer
+classes may or may not be viewer classes themselves..)  I would like to
+break the viewer classes up into blocks of code that do primarily one
+thing, and then design megaViewer classes that direct server output to the
+other viewer classes when necessary.  For example, ParseUnits is the parser
+for radar/lookout/navigate/march/etc.; ideally individual parsers could be
+defined for radar, and lookout, and march/navigate would call those parsers
+only when radar/lookout output is recognized.  This would certainly beat
+packing all those parsers into one big class..
+
+Possible storage of telegrams and announcements externally from the
+standard empire database.  This is a suggestion from Bernhard Reiter.  I'm
+not a proponent of this notion because I feel it increases code complexity.
+However, it would allow the telegrams and announcements to be viewed and
+edited with an external mailer programs.  It would also allow easy access
+to these messages externally, and it would keep the messages isolated from
+possible database crashes.
+
+Ulf Larsson suggests that a parser be implemented for move and designate.
+These parsers would need to scan outgoing commands in addition to the
+received output to determine how to update the database.  It is a little
+bit tricky, but it can be achieved.  The advantage of having these parsers
+is that move, designate, threshold, and distribute are some of the most
+frequently used commands.  By parsing this data, the need to frequently
+issue dumps can be greatly reduced.  Unfortunately, these parsers will
+probably not be able to drastically reduce the overall server traffic.
+Since the client uses the Wolfpack timestamp based dumps, the client
+currently only dumps those sectors that have changed.  Whenever a move is
+issued the server will update the sector's timestamp and the next
+incremental dump will send these sectors to the client.  Even if the move
+is parsed locally, there is no way to inform the server not to dump the
+information.
+
+If an extraordinary amount of output is written to the socket at once, it
+is possible to overflow the socket's buffer.  When this happens a
+"Resources temporarily unavailable" message is reported, and the client
+disconnects.  Ideally, the client should be able to handle this properly.
+(However, this tends to only occur when commands like "foreach * foreach *
+burst echo [sect]" are issued.  Since these dummy commands are pretty
+silly, this isn't a pressing problem.)
