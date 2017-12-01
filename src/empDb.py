@@ -623,7 +623,7 @@ class DatabaseSaver:
             'planetype' : {},
             'shiptype' : {},
             'landtype' : {},
-            'login': {'host':"localhost", 'port':6665,
+            'login': {'host':"empiredirectory.net", 'port':6665,
                       'coun':"visitor", 'repr':"visitor"},
             'version': {
                 'worldsize':(255,255), 'maxCountries':255, 'ETUSeconds':1024,
