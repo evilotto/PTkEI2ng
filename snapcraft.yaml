@@ -18,8 +18,8 @@ parts:
     # See 'snapcraft plugins'
     plugin: dump
     source: .
-    build-packages: [python2, python-tk]
-    stage-packages: [python2, python-tk]
+    build-packages: [python, python-tk]
+    stage-packages: [python, python-tk]
     organize:
       ptkei2ng: build/
       ptkei2ng.1: man/man1/
