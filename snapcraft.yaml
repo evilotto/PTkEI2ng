@@ -1,0 +1,29 @@
+name: ptkei2ng # you probably want to 'snapcraft register <name>'
+base: core18 # the base snap is the execution environment for this snap
+version: '4.4.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: Command-line client for Empire
+description: |
+  Command-line client for Empire
+
+grade: stable # must be 'stable' to release into candidate/stable channels
+confinement: strict # use 'strict' once you have the right plugs and slots
+icon:  PTkEI2ng.png
+title: PTkEI2ng
+
+apps:
+  ptkei2ng:
+    command: startempire
+parts:
+  ptkei2ng:
+    # See 'snapcraft plugins'
+    plugin: dump
+    source: .
+    build-packages: [python2, python-tk]
+    stage-packages: [python2, python-tk]
+    organize:
+      ptkei2ng: build/
+      ptkei2ng.1: man/man1/
+
+architectures:
+  - build-on: amd64
+
