@@ -10,7 +10,7 @@
 #    PmwBlt.py PmwColor.py
 
 import os
-import regsub
+import re
 import string
 import sys
 
@@ -42,12 +42,12 @@ needBlt = 0
 
 def expandLinks(path):
     if not os.path.isabs(path):
-	path = os.path.join(os.getcwd(), path)
+        path = os.path.join(os.getcwd(), path)
     while 1:
-	if not os.path.islink(path):
-	    break
-	dir = os.path.dirname(path)
-	path = os.path.join(dir, os.readlink(path))
+        if not os.path.islink(path):
+            break
+        dir = os.path.dirname(path)
+        path = os.path.join(dir, os.readlink(path))
 
     return path
 
@@ -56,9 +56,9 @@ def mungeFile(file):
     # other Pmw files.
     file = 'Pmw' + file + '.py'
     text = open(os.path.join(srcdir, file)).read()
-    text = regsub.gsub('import Pmw\>', '', text)
-    text = regsub.gsub('INITOPT = Pmw.INITOPT', '', text)
-    text = regsub.gsub('\<Pmw\.', '', text)
+    text = re.sub('import Pmw\>', '', text)
+    text = re.sub('INITOPT = Pmw.INITOPT', '', text)
+    text = re.sub('\<Pmw\.', '', text)
     text = '\n' + ('#' * 70) + '\n' + '### File: ' + file + '\n' + text
     return text
 
@@ -73,7 +73,7 @@ dir = os.path.dirname(dir)
 dir = expandLinks(dir)
 dir = os.path.basename(dir)
 
-version = string.replace(dir[4:], '_', '.')
+version = dir[4:].replace('_', '.')
 
 # Code to import the Color module.
 colorCode = """
@@ -108,7 +108,7 @@ def setversion(version):
 
 def setalphaversions(*alpha_versions):
     if alpha_versions != ():
-	raise ValueError, 'Dynamic versioning not available'
+    raise ValueError, 'Dynamic versioning not available'
 
 def version(alpha = 0):
     if alpha:
@@ -133,13 +133,13 @@ if '-nocolor' in sys.argv:
     needColor = 0
 
 if len(sys.argv) != 2:
-    print 'usage: bundlepmw.py [-noblt] [-nocolor] /path/to/Pmw/Pmw_X_X_X/lib'
+    print('usage: bundlepmw.py [-noblt] [-nocolor] /path/to/Pmw/Pmw_X_X_X/lib')
     sys.exit()
 
 srcdir = sys.argv[1]
 
 if os.path.exists('Pmw.py'):
-    print 'Pmw.py already exists. Remove it and try again.'
+    print('Pmw.py already exists. Remove it and try again.')
     sys.exit()
     
 outfile = open('Pmw.py', 'w')
@@ -154,8 +154,8 @@ outfile.write(extraCode % version)
 
 # Specially handle PmwBase.py file:
 text = mungeFile('Base')
-text = regsub.gsub('import PmwLogicalFont', '', text)
-text = regsub.gsub('PmwLogicalFont._font_initialise', '_font_initialise', text)
+text = re.sub('import PmwLogicalFont', '', text)
+text = re.sub('PmwLogicalFont._font_initialise', '_font_initialise', text)
 outfile.write(text)
 if not needBlt:
     outfile.write(ignoreBltCode)
@@ -165,12 +165,12 @@ for file in files:
     text = mungeFile(file)
     outfile.write(text)
 
-print ''
-print '   Pmw.py has been created.'
+print('')
+print('   Pmw.py has been created.')
 
 if needColor or needBlt:
-    print '   Before running freeze, also copy the following file(s):'
+    print('   Before running freeze, also copy the following file(s):')
     if needBlt:
-	print '   ' + os.path.join(srcdir, 'PmwBlt.py')
+        print('   ' + os.path.join(srcdir, 'PmwBlt.py'))
     if needColor:
-	print '   ' + os.path.join(srcdir, 'PmwColor.py')
+        print('   ' + os.path.join(srcdir, 'PmwColor.py'))

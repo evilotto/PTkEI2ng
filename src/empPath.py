@@ -47,7 +47,7 @@ def neighbours( coords ) :
 
 def coords_to_str( coords ) :
     x , y  = coords
-    return `x` + ',' + `y`
+    return repr(x) + ',' + repr(y)
 
 ##  MobCost is used in the bestpath algorithm.
 ##  Bestpath for navigating, marching and
@@ -228,7 +228,7 @@ class Paths :
         i = 0
         for sect in neighbours( path.end ) :
             dir = move_directions[ i ]
-            if not self.__visited.has_key( sect ) :
+            if sect not in self.__visited :
                 new_path = path.post_extend( sect ,
                                              self.__mob.cost( sect ),
                                              dir )
@@ -253,7 +253,7 @@ class Paths :
         i = 0
         for sect in neighbours( path.start ) :
             dir = move_reverse_directions[ i ]
-            if not self.__visited.has_key( sect ) :
+            if sect not in self.__visited :
                 new_path = path.pre_extend( sect,
                                             self.__mob.cost( sect ),
                                             dir )
@@ -329,7 +329,7 @@ class Paths :
         for removed in removed_list :
             ## print "activate " + removed.str() + " neighbours"
             for sect in neighbours( removed ) :
-                if self.__visited.has_key( sect) :
+                if sect in self.__visited :
                      self.__activate_path_end( sect )
 
     def __activate_path_end( self, sect ) :
@@ -351,7 +351,7 @@ def path_str( path ) :
     """ make a  string out of a path """
     return ( coords_to_str( path.start ) + ' ' + path.directions
              + ' ' + coords_to_str( path.end )
-             + ' (' + `path.cost` + ')' )
+             + ' (' + repr(path.cost) + ')' )
 
 
 
@@ -389,20 +389,20 @@ class MoveGenerator :
         ## print len( src_secs ) , " source sectors",
         ## print len( dst_secs ) , " destination sectors",
 
-        self.__paths = Paths( self.__from_map.keys(),
-                              self.__to_map.keys(),
+        self.__paths = Paths( list(self.__from_map.keys()),
+                              list(self.__to_map.keys()),
                               mcost )
 
         ## print "use ", len( self.__from_map ) , " source sectors",
         ## print len( self.__to_map ) , " destination sectors",
 
-        self.next()
+        next(self)
 
     def empty( self ) :
         """ no more move commands """
         return not self.__move
 
-    def next( self ) :
+    def __next__( self ) :
         """ proceede to next move command """
         self.__move = None
         while not ( self.__paths.empty() or self.__move ) :
@@ -474,8 +474,8 @@ class MultiMove :
                                      to_amount )
 
 
-        for coords in dst.keys() :
-            if src.has_key( coords ) :
+        for coords in list(dst.keys()) :
+            if coords in src :
                 del src[ coords ]
 
         self.__mover = MoveGenerator( commodity,
@@ -488,9 +488,9 @@ class MultiMove :
         """ no more move commands """
         return self.__mover.empty()
 
-    def next( self ) :
+    def __next__( self ) :
         """ proceede to next move command """
-        self.__mover.next()
+        next(self.__mover)
 
     def move_cmd_str( self ) :
         """ construct a move command string """
@@ -498,7 +498,7 @@ class MultiMove :
         if not self.__mover.empty() :
             commodity, path, amount = self.__mover.move();
             result = ( 'move ' + commodity + ' '
-                       + coords_to_str( path.start ) + ' ' + `amount`
+                       + coords_to_str( path.start ) + ' ' + repr(amount)
                        + ' ' + coords_to_str( path.end ) )
         return result
 
@@ -506,7 +506,7 @@ class MultiMove :
     def __create_src_map( self, commodity, from_secs, from_amount, mob_limit ):
         """ create  source sectors dictionary """
         result = {}
-        for sect in from_secs.values() :
+        for sect in list(from_secs.values()) :
             coords  = empSector.to_coord( sect )
             if empSector.is_movable_from( sect, commodity ) :
 
@@ -524,7 +524,7 @@ class MultiMove :
     def __create_dst_map( self, commodity, to_secs, to_amount ):
         """ create  destination sectors dictionary """
         result =  {}
-        for sect in to_secs.values() :
+        for sect in list(to_secs.values()) :
             coords = empSector.to_coord( sect )
             if empSector.is_movable_into( sect, commodity )  :
                 amount = to_amount - empSector.value( sect, commodity )
@@ -564,9 +564,9 @@ class MultiExplore :
         """ no more explore commands """
         return self.__explore.empty()
 
-    def next( self ) :
+    def __next__( self ) :
         """ proceede to next explore command """
-        self.__explore.next()
+        next(self.__explore)
 
     def explore_cmd_str( self ) :
         """ construct a expl command string """
@@ -574,7 +574,7 @@ class MultiExplore :
         if not self.__explore.empty() :
             commodity, path, amount = self.__explore.move();
             result = ( 'expl ' + commodity + ' '
-                       + coords_to_str( path.start ) + ' ' + `amount`
+                       + coords_to_str( path.start ) + ' ' + repr(amount)
                        + ' ' + path.directions + 'h' )
             return result
 
@@ -582,7 +582,7 @@ class MultiExplore :
     def __create_src_map( self, commodity, from_secs, from_amount, mob_limit ):
         """ init source sectors dictionary """
         result = {};
-        for sect in from_secs.values() :
+        for sect in list(from_secs.values()) :
             coords  = empSector.to_coord( sect )
             if empSector.is_movable_from( sect, commodity ) :
 
@@ -602,7 +602,7 @@ class MultiExplore :
     def __create_dst_map( self, to_secs ):
         """ init destination sectors dictionary """
         result = {}
-        for sect in to_secs.values() :
+        for sect in list(to_secs.values()) :
             if empSector.is_explorable_into( sect ) :
                 coords = empSector.to_coord( sect )
                 result[ coords ] = 1

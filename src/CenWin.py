@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import string
 import types
 
@@ -64,18 +64,18 @@ def bindLabel(label):
                (lambda e, label=label:
                 leaveLabel(label)))
 
-class LabPair(Tkinter.Frame):
+class LabPair(tkinter.Frame):
     """Create a label/value pair for HDL with description LABEL."""
     def __init__(self, master, deflist, name, **kw):
         # label, command, hide, default
         self.name = name
         self.default = kw.get('default')
         self.hide = kw.get('hide')
-        label = kw.get('label', string.upper(name[:1]) + name[1:])
-        self.label = Tkinter.Label(master, name="label",
+        label = kw.get('label', name[:1].upper() + name[1:])
+        self.label = tkinter.Label(master, name="label",
                                    text=label, width=7, anchor='ne')
         self.label.pack(side='top', expand=1, fill='both')
-        self.value = Tkinter.Label(master, name="value",
+        self.value = tkinter.Label(master, name="value",
 ##  				   relief='sunken', anchor='ne')
                                    anchor='ne')
         self.value.pack(side='top', expand=1, fill='both')
@@ -110,11 +110,11 @@ class LabPairIdx:
         # takes label, command, hide as possible parameters:
         self.default = kw.get('default')
         self.hide = kw.get('hide')
-        label = kw.get('label', string.upper(name[:1]) + name[1:])
+        label = kw.get('label', name[:1].upper() + name[1:])
         self.coord = ["", ""]
-        self.label = Tkinter.Label(master, name="label",
+        self.label = tkinter.Label(master, name="label",
                       text=label, width=7, anchor='ne')
-        self.value = Tkinter.Label(master, name="value",
+        self.value = tkinter.Label(master, name="value",
 ##  			   width=4, relief='sunken', anchor='ne')
                            width=4, anchor='ne')
         self.label.pack(side='top', expand=1, fill='both')
@@ -164,18 +164,18 @@ class ComdQuad:
     """Create 4 fields for a commodity."""
     def __init__(self, master, deflist, comd,
                  vhdl=None, dhdl=None, chdl=None, ahdl=None):
-        frame = Tkinter.Frame(master, name=comd, class_="Commodity")
+        frame = tkinter.Frame(master, name=comd, class_="Commodity")
         frame.pack(side='top')
         f = comd[0]
-        label = Tkinter.Label(frame, name="label",
-                              text=string.upper(f)+comd[1:],
+        label = tkinter.Label(frame, name="label",
+                              text=f.upper()+comd[1:],
                               width=4, anchor='ne')
         label.pack(side='left')
         for i in ((comd, 4, vhdl, 'value'),
                   (f+"_dist", 4, dhdl, 'thresh'),
                   (f+"_cut", 4, chdl, 'cutoff'),
                   (f+"_del", 1, ahdl, 'deliver')):
-            tmp = Tkinter.Label(frame, name=i[3], width=i[1],
+            tmp = tkinter.Label(frame, name=i[3], width=i[1],
                                 relief='sunken', anchor='ne')
             tmp.pack(side='left')
             if i[2]:
@@ -196,7 +196,7 @@ def DoWinList(rframe, hookList, lablist):
             printSeperator = 0
             continue
         if printSeperator:
-            Tkinter.Frame(rframe, borderwidth=2, relief='raised', height=2
+            tkinter.Frame(rframe, borderwidth=2, relief='raised', height=2
                           ).grid(row=row, column=0, columnspan=5,
                                  sticky='we')
             row = row + 1
@@ -204,13 +204,13 @@ def DoWinList(rframe, hookList, lablist):
             if j:
                 if j[0] is LabPairIdx: name=j[1]+"sect"
                 else: name=j[1]
-                tmp = Tkinter.Frame(rframe, name=name, class_="Resources")
+                tmp = tkinter.Frame(rframe, name=name, class_="Resources")
 ##		tmp = Tkinter.Frame(rframe, class_="Resources")
                 tmp.grid(column=col, row=row)
-                if type(j[-1]) == types.DictType:
-                    apply(j[0], (tmp, hookList)+j[1:-1], j[-1])
+                if type(j[-1]) == dict:
+                    j[0](*(tmp, hookList)+j[1:-1], **j[-1])
                 else:
-                    apply(j[0], (tmp, hookList)+j[1:])
+                    j[0](*(tmp, hookList)+j[1:])
 ##		packClear(tmp)
             col = col + 1
         row = row + 1
@@ -243,7 +243,7 @@ class cenWin:
             self.name = 'sector'
 
             # Sector resources
-            rframe = Tkinter.Frame(master, name="resources", class_="SubCensor")
+            rframe = tkinter.Frame(master, name="resources", class_="SubCensor")
             rframe.pack(side='top')
 
             self.Rlist = {}
@@ -317,26 +317,26 @@ class cenWin:
                 (),
                 ))
 
-            self.predictVar = Tkinter.StringVar()
-            predict = Tkinter.Label(master, height=1, width=1, anchor='nw',
+            self.predictVar = tkinter.StringVar()
+            predict = tkinter.Label(master, height=1, width=1, anchor='nw',
                                     justify='left', relief='flat',
                                     textvariable=self.predictVar)
             predict.pack(side='bottom', fill='both', expand=1)
             viewer.Balloon.bind(predict, "Guesses about the next update")
 
-            cframe = Tkinter.Frame(master, name="commodities")
+            cframe = tkinter.Frame(master, name="commodities")
             cframe.pack(side='left', anchor='ne')
-            lcframe = Tkinter.Frame(cframe, name="label")
+            lcframe = tkinter.Frame(cframe, name="label")
             lcframe.pack()
-            Tkinter.Label(lcframe, name="label", text="Type",
+            tkinter.Label(lcframe, name="label", text="Type",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="value", text="Qty",
+            tkinter.Label(lcframe, name="value", text="Qty",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="thresh", text="Thr",
+            tkinter.Label(lcframe, name="thresh", text="Thr",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="cutoff", text="Del",
+            tkinter.Label(lcframe, name="cutoff", text="Del",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="direction",
+            tkinter.Label(lcframe, name="direction",
                   width=1, anchor='w').pack(side='left')
             for i in ("civ", "mil", "uw", "food", "shell", "gun", "pet"):
                 ComdQuad(cframe, self.Rlist, i,
@@ -349,19 +349,19 @@ class cenWin:
                          (lambda e, h=self.SetDir, i=i:
                           h(i)))
 
-            cframe = Tkinter.Frame(master, name="commodities2")
+            cframe = tkinter.Frame(master, name="commodities2")
             cframe.pack(side='left', anchor='ne')
-            lcframe = Tkinter.Frame(cframe, name="label")
+            lcframe = tkinter.Frame(cframe, name="label")
             lcframe.pack()
-            Tkinter.Label(lcframe, name="label", text="Type",
+            tkinter.Label(lcframe, name="label", text="Type",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="value", text="Qty",
+            tkinter.Label(lcframe, name="value", text="Qty",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="thresh", text="Thr",
+            tkinter.Label(lcframe, name="thresh", text="Thr",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="cutoff", text="Del",
+            tkinter.Label(lcframe, name="cutoff", text="Del",
                   width=4, anchor='w').pack(side='left')
-            Tkinter.Label(lcframe, name="direction",
+            tkinter.Label(lcframe, name="direction",
                   width=1, anchor='w').pack(side='left')
             for i in ("iron", "dust", "bar", "oil", "lcm", "hcm", "rad"):
                 ComdQuad(cframe, self.Rlist, i,
@@ -479,12 +479,12 @@ class cenWin:
                 "rdbe", "rdbPe")
 
         def redraw(self, total):
-            if not total and not empDb.updateDB[self.db].has_key(self.key):
+            if not total and self.key not in empDb.updateDB[self.db]:
                 # Nothing has been updated
                 return
             DB = empDb.megaDB[self.db]
             DBs = DB.get(self.key, {})
-            for i, j in self.Rlist.items():
+            for i, j in list(self.Rlist.items()):
                 j(DBs.get(i, ""), DBs)
             self.predictVar.set(empSector.sectorPredictions(DBs))
 
@@ -495,9 +495,9 @@ class cenWin:
 
             self.sect = ()
 
-            sframe = Tkinter.Frame(master, name=self.name, class_="SubCensor")
+            sframe = tkinter.Frame(master, name=self.name, class_="SubCensor")
             sframe.pack(side='bottom', fill='both', expand=1)
-            scrollY = Tkinter.Scrollbar(sframe, name="scrollY")
+            scrollY = tkinter.Scrollbar(sframe, name="scrollY")
             scrollY.pack(side='right', fill='y')
             self.List = Tk_List.MyListbox(sframe, name="list",
                                           height=4, command=self.SetId,
@@ -505,7 +505,7 @@ class cenWin:
             self.List.pack(side='left', fill='both', expand=1)
             scrollY['command'] = self.List.yview
 
-            rframe = Tkinter.Frame(master, name="resources")
+            rframe = tkinter.Frame(master, name="resources")
             rframe.pack(side='top')
 
             self.Rlist = {}
@@ -513,12 +513,12 @@ class cenWin:
             DoWinList(rframe, self.Rlist, self.winList)
 
         def redrawWin(self, total=0):
-            if not total and not empDb.updateDB[self.db].has_key(self.key):
+            if not total and self.key not in empDb.updateDB[self.db]:
                 # Nothing has been updated
                 return
             DB = empDb.megaDB[self.db]
             DBs = DB.get(self.key, {})
-            for i, j in self.Rlist.items():
+            for i, j in list(self.Rlist.items()):
                 j(DBs.get(i, ""), DBs)
 
         def getKey(self):
@@ -558,7 +558,7 @@ class cenWin:
             DB = empDb.megaDB.get(self.db, {})
             self.List.delete()
             list = []
-            for i, j in DB.items():
+            for i, j in list(DB.items()):
                 if self.sect:
                     x = j['x']; y = j['y']
                     if (x < self.sect[0] or x > self.sect[1]
@@ -578,7 +578,7 @@ class cenWin:
             list.sort(compare_tuples)
             for i in list:
                 self.List.insert('end', i)
-            apply(self.List.setStatus, sts)
+            self.List.setStatus(*sts)
 
         def GoLand(self, name):
             k = empDb.megaDB.get(self.db, {}).get(self.key, {}).get('land')
@@ -793,7 +793,7 @@ class cenWin:
         self.blist = {}
         self.sect = (0,0,0,0)
 
-        buttons = Tkinter.Frame(master, name="buttons")
+        buttons = tkinter.Frame(master, name="buttons")
         buttons.pack(side='top', fill='x')
         for i in (#('Nuke', self.SectorCensus, 'NUKES'),
                   ('Plane', self.PlaneCensus, 'PLANES',
@@ -804,11 +804,11 @@ class cenWin:
                    "View ships"),
                   ('Sector', self.SectorCensus, 'SECTOR',
                    "View sector information.")):
-            frm = Tkinter.Frame(master, name="f"+i[0], class_="Buttons",
+            frm = tkinter.Frame(master, name="f"+i[0], class_="Buttons",
                         relief='raised', borderwidth=2)
             frm.handle = i[1](frm)
             frm.db = i[2]
-            frm.button = Tkinter.Button(buttons, name="b"+i[0],
+            frm.button = tkinter.Button(buttons, name="b"+i[0],
                                         text=i[0], relief='flat',
                                         command=(lambda self=self, cls=frm:
                                                  self.newWin(cls)))

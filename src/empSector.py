@@ -290,14 +290,14 @@ def eff_work_new( sect, work ) :
 
     if sect.get('owner') == empDb.CN_OWNED:
         secttype = empDb.megaDB['sectortype'][new_des]
-        if secttype.has_key('lcm_eff') and secttype['lcm_eff'] > 0:
+        if 'lcm_eff' in secttype and secttype['lcm_eff'] > 0:
             lcms = sect.get('lcm')
             if lcms is None:
                 lcms = 0
             lcms = lcms / secttype['lcm_eff']
             if twork > lcms:
                 twork = lcms
-        if secttype.has_key('hcm_eff') and secttype['hcm_eff'] > 0:
+        if 'hcm_eff' in secttype and secttype['hcm_eff'] > 0:
             hcms = sect.get('hcm')
             if hcms is None:
                 hcms = 0

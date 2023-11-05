@@ -21,7 +21,7 @@
 import sys
 import signal
 import string
-import cPickle
+import pickle
 import operator
 import time
 import traceback
@@ -117,11 +117,11 @@ class dictDB:
         # Compress dictionary to header and value tuples.
         headers = self.__arrangeHeaders()
         # Preallocate the lists
-        revrng = range(len(headers)-1, 0, -1)
+        revrng = list(range(len(headers)-1, 0, -1))
         totalList = [None]*len(self.primary)
         i = 0
-        for dict in self.primary.values():
-            subList = map(dict.get, headers)
+        for dict in list(self.primary.values()):
+            subList = list(map(dict.get, headers))
             # Eliminate trailing None values.
             for j in revrng:
                 if subList[j] is not None:
@@ -134,7 +134,7 @@ class dictDB:
                 'primary_headers' : headers,
                 'primary_values': totalList,
                 'timestamp': self.timestamp,
-                'secondary_keys': self.secondary.keys()}
+                'secondary_keys': list(self.secondary.keys())}
     def __setstate__(self, state):
         """Pickle module handler: restore a saved class."""
         pri_keytype = self.primary_keytype = state['primary_keytype']
@@ -162,7 +162,7 @@ class dictDB:
         self.secondary = secondary = {}
         for sec_type in seckeys:
             secondary[sec_type] = secIndex = {}
-            for pri_key, pri_val in primary.items():
+            for pri_key, pri_val in list(primary.items()):
                 sec_key = tuple(map(pri_val.get, sec_type))
                 try: secIndex[sec_key][pri_key] = pri_val
                 except KeyError: secIndex[sec_key] = {pri_key: pri_val}
@@ -175,7 +175,7 @@ class dictDB:
         self.items = primary.items
         self.values = primary.values
         self.keys = primary.keys
-        self.has_key = primary.has_key
+        self.__contains__ = primary.__contains__
     def __init__(self, key, *seckeys):
         # Initialization the class - called at creation time only.
         self.__setstate__({'primary_keytype': key,
@@ -189,21 +189,21 @@ class dictDB:
     def __arrangeHeaders(self):
         """Return a list of all headers sorted by frequency."""
         headers = {}
-        for dict in self.primary.values():
-            for j in dict.keys():
-                if headers.has_key(j):
+        for dict in list(self.primary.values()):
+            for j in list(dict.keys()):
+                if j in headers:
                     headers[j] = headers[j] + 1
                 else:
                     headers[j] = 1
-        lst = map(list, headers.items())
+        lst = list(map(list, list(headers.items())))
         for i in lst:
             i.reverse()
         lst.sort()
         lst.reverse()
-        lst = map(operator.getitem, lst, (1,) * len(lst))
+        lst = list(map(operator.getitem, lst, (1,) * len(lst)))
         return lst
 
-    def updates(self, list, returnRemaining=0):
+    def updates(self, ulist, returnRemaining=0):
         """Update the database with the items stored in LIST.
 
         Given a list of dictionary types, extract the primary key from each
@@ -213,26 +213,30 @@ class dictDB:
         # Python optimization - copy frequently used variables into
         # local namespace.
         self__primary=self.primary;self__primary_keytype=self.primary_keytype
-        self__secondary__items=self.secondary.items();self__uDB=self.uDB
-        operator__delitem=operator.delitem;operator__getitem=operator.getitem
+        self__secondary__items=list(self.secondary.items())
+        self__uDB=self.uDB
+        operator__delitem=operator.delitem
+        operator__getitem=operator.getitem
         __tuple=tuple;__map=map;__len=len
 
         if returnRemaining:
             # This flag instructs the routine to return all items in the
             # database that were _not_ updated during this call.
             remainingList = self__primary.copy()
-        for dict in list:
+        for udict in ulist:
             # find the key
             pri_key = __tuple(__map(operator__getitem,
-                                    (dict,)*__len(self__primary_keytype),
+                                    (udict,)*__len(self__primary_keytype),
                                     self__primary_keytype))
 
             # list all items being deleted
-            dict__items = dict.items()
-            keys = __map(operator__getitem, dict__items
-                         , (0,)*__len(dict__items))
-            values = __map(operator__getitem, dict__items
-                           , (1,)*__len(dict__items))
+            dict__items = list(udict.items())
+            keys = list(udict.keys())
+            values = list(udict.values())
+            # keys = __map(operator__getitem, dict__items
+                         # , (0,)*__len(dict__items))
+            # values = __map(operator__getitem, dict__items
+                           # , (1,)*__len(dict__items))
             delList = []
             try:
                 while 1:
@@ -280,7 +284,7 @@ class dictDB:
                         del sec_db[sec_key]
 
             # Add item to the primary database
-            self__primary[pri_key].update(dict)
+            self__primary[pri_key].update(udict)
             # Remove items selected for deletion
             __map(operator__delitem, (self__primary[pri_key],)*__len(delList)
                   , delList)
@@ -299,7 +303,7 @@ class dictDB:
     def __repr__(self):
         return repr(self.primary)
     def __str__(self):
-        return string.join(map(str, self.primary.items()), "\n")
+        return "\n".join(list(map(str, list(self.primary.items()))))
 
 ###########################################################################
 #############################  Country class  #############################
@@ -365,8 +369,8 @@ class Countries:
     def getList(self):
         """Return a list of all countries."""
         max = megaDB['version']['maxCountries']
-        rng = range(max)
-        lst = map(None, rng, map(self.idList.get, rng, [""]*max))
+        rng = list(range(max))
+        lst = map(None, rng, list(map(self.idList.get, rng, [""]*max)))
         lst.sort
         return lst
 
@@ -405,7 +409,7 @@ class Countries:
         """Attempt to resolve a name/id pair."""
         # Check if there are any outstanding names in the database
         # that should be updated with the newly found id.
-        if self.unresolved.has_key(name):
+        if name in self.unresolved:
             list = self.unresolved[name]
             for dbname, key in list:
                 db = megaDB[dbname][key]
@@ -695,15 +699,15 @@ class DatabaseSaver:
         except IOError:
             self.reset()
         else:
-            megaDB = cPickle.load(fl)
+            megaDB = pickle.load(fl)
             if megaDB['DB_Version'] != self.DBVersion:
-                raise self.dbError, (
-                    "PTkEI: Database has an incorrect version number.")
+                raise self.dbError((
+                    "PTkEI: Database has an incorrect version number."))
             fl.close()
             self.newDatabase = 0
             self.needSave = 0
             self.resetUpdate()
-        if not megaDB.has_key('planetype'):
+        if 'planetype' not in megaDB:
             megaDB['planetype'] = {}
             megaDB['shiptype'] = {}
             megaDB['landtype'] = {}
@@ -713,9 +717,9 @@ class DatabaseSaver:
         if not self.needSave:
             # No need to save anything
             return
-        print "PTkEI: Saving DB to '%s'.." % self.filename
+        print("PTkEI: Saving DB to '%s'.." % self.filename)
         fl = open(self.filename, 'wb')
-        cPickle.dump(megaDB, fl, 1)
+        pickle.dump(megaDB, fl, 1)
         fl.close()
 
 DBIO = DatabaseSaver()

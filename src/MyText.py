@@ -1,4 +1,4 @@
-import Tkinter
+import tkinter
 import string
 
 # This class is a copy of the TkTextMixin class of the Anygui project
@@ -10,18 +10,18 @@ import string
 # Svensson, Shanky Tiwari, Laura Creighton, Dallas T. Johnston,
 # Patrick K. O'Brien, Phil Cook.
 
-class MyText(Tkinter.Text):
+class MyText(tkinter.Text):
     """This is a replacement of the Tkinter Text widget.  It only
     supports selection and copy of text but not editing.  Simply using
     state = 'disabled' didn't work as it disabled those actions.  When the widget is uneditable """
     
     def __init__(self, *args, **kw):
-        if kw.has_key('next'):
+        if 'next' in kw:
             self.next = kw['next']
             del kw['next']
         else:
             self.next = None
-        apply(Tkinter.Text.__init__, (self,) + args, kw)
+        tkinter.Text.__init__(*(self,) + args, **kw)
         self.ctl = 0
         self.alt = 0
         self.shift = 0
@@ -61,7 +61,7 @@ class MyText(Tkinter.Text):
         self.shift = 0
 
     def mousebinding(self, ev):
-        print 'entering mousebinding'
+        print('entering mousebinding')
         if self.editable:
             return None
         else:

@@ -16,13 +16,13 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import string
 import operator
 
 ###########################################################################
 #############################  My Listbox     #############################
-class MyListbox(Tkinter.Listbox):
+class MyListbox(tkinter.Listbox):
     """Ughh..  The standard Tk Listbox is essentially useless in its
     current form.  This is an attempt to add at least some functionality."""
     def __init__(self, master=None, cnf={}, **kw):
@@ -32,7 +32,7 @@ class MyListbox(Tkinter.Listbox):
         if self.cmd1 is not None:
             del cnf['command']
         defset.update(cnf)
-        Tkinter.Listbox.__init__(self, master, defset)
+        tkinter.Listbox.__init__(self, master, defset)
         if self.cmd1 is not None:
             btags = self.bindtags()
             self.bindtags((btags[1], btags[0]) + btags[2:])
@@ -42,9 +42,9 @@ class MyListbox(Tkinter.Listbox):
         self.datalist = []
         self.curselect = ()
     def curselection(self):
-        cs = Tkinter.Listbox.curselection(self)
-        return map(operator.getitem, len(cs)*[self.datalist],
-                   map(int, cs))
+        cs = tkinter.Listbox.curselection(self)
+        return list(map(operator.getitem, len(cs)*[self.datalist],
+                   list(map(int, cs))))
     def get(self, first, last=None):
         pf = self.index(first)
         if last is None:
@@ -58,7 +58,7 @@ class MyListbox(Tkinter.Listbox):
             # Special case - delete all
             self.datalist = []
             self.curselect = ()
-            Tkinter.Listbox.delete(self, 0, 'end')
+            tkinter.Listbox.delete(self, 0, 'end')
             self.do1()
             return
         for i in items:
@@ -68,7 +68,7 @@ class MyListbox(Tkinter.Listbox):
 
             if 0: pass
             else:
-                Tkinter.Listbox.delete(self, j)
+                tkinter.Listbox.delete(self, j)
                 del self.datalist[j:j+1]
         self.do1()
     def insert(self, index, *elements):
@@ -78,7 +78,7 @@ class MyListbox(Tkinter.Listbox):
             elmts.append(i[0])
             self.datalist[pos:pos] = [ i[1] ]
             pos = pos + 1
-        apply(Tkinter.Listbox.insert, (self, index) + tuple(elmts))
+        tkinter.Listbox.insert(*(self, index) + tuple(elmts))
         self.do1()
     def getStatus(self):
         """Return the current selection."""
@@ -100,7 +100,7 @@ class MyListbox(Tkinter.Listbox):
         except NameError: self.select_set(0)
         self.do1()
     def do1(self, event=None):
-        cs = Tkinter.Listbox.curselection(self)
+        cs = tkinter.Listbox.curselection(self)
         if cs != self.curselect:
             self.curselect = cs
             self.cmd1(self.curselection())

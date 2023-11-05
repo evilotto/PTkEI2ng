@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import string
 import re
 
@@ -33,13 +33,13 @@ class SimpDisp(empParse.baseDisp):
         empParse.baseDisp.__init__(self, disp)
 
         # Create root window
-        self.Root = Tkinter.Toplevel(class_="Output")
+        self.Root = tkinter.Toplevel(class_="Output")
         self.Root.title(title)
         self.Root.iconname(title)
 
-        title = string.lower(string.split(title, None, 1)[0])
+        title = string.lower(title.split(None, 1)[0])
         # Create text box and scrollbar
-        scrollY = Tkinter.Scrollbar(self.Root, name="scrollY")
+        scrollY = tkinter.Scrollbar(self.Root, name="scrollY")
         scrollY.pack(side='right', fill='y')
         self.Text = MyText.MyText(self.Root, name=title, setgrid=1, 
                                   yscrollcommand=scrollY.set)

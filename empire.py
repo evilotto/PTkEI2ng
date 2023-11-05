@@ -19,6 +19,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import sys
+import atexit
 import os
 import getopt
 import string
@@ -62,24 +63,15 @@ import traceback
 ############################ Python 1.5.2 Check ###########################
 
 try:
-    test = r"Test for 'r' string flag."
-    del test
-
-    try:
-        # Python 1.5.1 and earlier returned 0 for atoi('-')...
-        string.atoi('-')
-    except ValueError:
-        pass
-    else:
-        raise "outdated.."
+    assert sys.version_info >= (3, 5)
 except:
-    print """
+    print("""
 
-It appears this version of Python is out-dated.  You must have Python 1.5.2
+It appears this version of Python is out-dated.  You must have Python 3.5
 or later installed in order for the client to work.  See the web site at:
 http://www.python.org/ for more information on upgrading Python.
 
-"""
+""")
     sys.exit(1)
 
 VERSION = '2.00.0'
@@ -133,19 +125,19 @@ To contact the developers, please send email to <ptkei2@gmail.com>.
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'apvltcxnh?I:', ['help'])
     except getopt.error:
-        print usage
+        print(usage)
         sys.exit()
     # Check for help request
-    argnames = map(operator.getitem, opts, [0]*len(opts))
+    argnames = list(map(operator.getitem, opts, [0]*len(opts)))
     if ('-h' in argnames or '-?' in argnames or '--help' in argnames
         or len(args) > 1):
-        print usage
+        print(usage)
         sys.exit()
     if '-v' in argnames:
-        print versionText
+        print(versionText)
         sys.exit(0)
     if '-l' in argnames:
-        print licenseText
+        print(licenseText)
         sys.exit(0)
     # Check for visual assistance
     if '-a' in argnames:
@@ -211,7 +203,7 @@ To contact the developers, please send email to <ptkei2@gmail.com>.
         traceback.print_exc()
         sys.exit()
     # Setup an automatic database saver.
-    sys.exitfunc = empDb.DBIO.save
+    atexit.register(empDb.DBIO.save)
 
     empDb.predict = predict
     empDb.assist = assist
@@ -229,10 +221,12 @@ To contact the developers, please send email to <ptkei2@gmail.com>.
         try:
             import empTk
         except:
-            print (
+            import traceback
+            print((
                 'An exception (%s) raised during Tk initialization:\n"%s"\n'
                 "Reverting to text interface.\n"
-                ) % tuple(sys.exc_info()[:2])
+                ) % tuple(sys.exc_info()[:2]))
+            traceback.print_exc()
             import empText
             viewer = empText.SText()
         else:

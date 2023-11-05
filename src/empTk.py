@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import Pmw
 import select
 import string
@@ -127,40 +127,40 @@ class mainWin:
         self.Root = Display
         self.Root.title("Python/Tk Empire Interface")
 
-        self.coord = Tkinter.StringVar()
+        self.coord = tkinter.StringVar()
 
-        statusbar = Tkinter.Frame(self.Root, name="statusbar")
+        statusbar = tkinter.Frame(self.Root, name="statusbar")
         statusbar.pack(side='bottom', anchor='s', fill='both')
-        coordLabel = Tkinter.Label(self.Root, name="coord",
+        coordLabel = tkinter.Label(self.Root, name="coord",
                                    textvariable=self.coord, width=20,
                                    relief="sunken")
         coordLabel.pack(in_=statusbar, fill='both', side='right')
         self.Balloon.bind(coordLabel, "Empire coordinates")
         self.queueStatus = LoginWin.QueueStatus(statusbar)
 
-        self.Status = Tkinter.Entry(self.Root, name="status", relief='sunken')
+        self.Status = tkinter.Entry(self.Root, name="status", relief='sunken')
         self.Status.pack(in_=statusbar, fill='both', expand=1)
         self.Status.bind('<Key-Return>', self.DoStatus)
         self.Status.insert(0, "Welcome to empire!")
         self.Status['state']='disabled'
 
-##  	# Create a main PanedWidget with top and bottom panes.
-##  	pane = Pmw.PanedWidget(self.Root, hull_width='7i', hull_height=800)
-##  	pane.pack(side='right', expand=1, fill='both')
+##          # Create a main PanedWidget with top and bottom panes.
+##          pane = Pmw.PanedWidget(self.Root, hull_width='7i', hull_height=800)
+##          pane.pack(side='right', expand=1, fill='both')
 
-        mapframe = Tkinter.Frame(self.Root, name="mapframe", class_="Map")
-##  	mapframe = Tkinter.Frame(self.Root, name="mapframe", class_="Map")
-##  	mapframe.pack(in_=pane.add('top'), expand=1, fill='both')
-##  	mapframe = Tkinter.Frame(pane.pane('top'), name="mapframe", class_="Map")
-##  	mapframe.pack(expand=1, fill='both')
-##  	mapframe = pane.add('mapframe')
+        mapframe = tkinter.Frame(self.Root, name="mapframe", class_="Map")
+##          mapframe = Tkinter.Frame(self.Root, name="mapframe", class_="Map")
+##          mapframe.pack(in_=pane.add('top'), expand=1, fill='both')
+##          mapframe = Tkinter.Frame(pane.pane('top'), name="mapframe", class_="Map")
+##          mapframe.pack(expand=1, fill='both')
+##          mapframe = pane.add('mapframe')
 
         self.map = MapWin.mapSubWin(mapframe)
         self.mapList = [self.map]
 
-        infoframe = Tkinter.Frame(self.Root, name="infoframe")
+        infoframe = tkinter.Frame(self.Root, name="infoframe")
         infoframe.pack(side='left', fill='both')
-        self.CmdPrompt = Tkinter.Label(self.Root, name="cmdprompt",
+        self.CmdPrompt = tkinter.Label(self.Root, name="cmdprompt",
                                        anchor='ne')
         self.CmdPrompt.pack(in_=infoframe, side='bottom', anchor='s',
                             fill='x')
@@ -170,14 +170,14 @@ class mainWin:
         self.Balloon.bind(self.CmdPrompt, "Empire prompt")
         self.cen = CenWin.cenWin(infoframe)
 
-        ioframe = Tkinter.Frame(self.Root, name="ioframe", class_="Censor")
-##  	ioframe.pack(in_=pane.add('bottom', size=400), expand=1, fill='both')
-##  	ioframe = Tkinter.Frame(pane.pane('bottom'), name="ioframe",
-##  				class_="Censor")
-##  	ioframe.pack(expand=1, fill='both')
-##  	ioframe = pane.add('ioframe')
+        ioframe = tkinter.Frame(self.Root, name="ioframe", class_="Censor")
+##          ioframe.pack(in_=pane.add('bottom', size=400), expand=1, fill='both')
+##          ioframe = Tkinter.Frame(pane.pane('bottom'), name="ioframe",
+##                                  class_="Censor")
+##          ioframe.pack(expand=1, fill='both')
+##          ioframe = pane.add('ioframe')
 
-        self.Prompt = Tkinter.Entry(self.Root, name="prompt")
+        self.Prompt = tkinter.Entry(self.Root, name="prompt")
         self.Prompt.pack(in_=ioframe, side='bottom', anchor='s', fill='x')
         self.Prompt.bind('<Key-Return>', self.DoCmd)
         self.Prompt.bind('<Control-z>', self.DoCtld)
@@ -185,7 +185,7 @@ class mainWin:
         self.Prompt.bind('<Down>', (lambda e, s=self: s.DoHistoryMove(-1)))
         self.Prompt.focus()
 
-        scrollY = Tkinter.Scrollbar(self.Root, name="ioscrollbar")
+        scrollY = tkinter.Scrollbar(self.Root, name="ioscrollbar")
         scrollY.pack(in_=ioframe, side='right', anchor='e', fill='y')
         self.Output = MyText.MyText(self.Root, name="iobox",
                                     yscrollcommand=scrollY.set,
@@ -193,18 +193,18 @@ class mainWin:
         self.Output.setEditable(0)
         self.Output.pack(in_=ioframe, side='left', anchor='se',
                          expand=1, fill='both')
-##  	scrollY = Tkinter.Scrollbar(ioframe, name="ioscrollbar")
-##  	scrollY.pack(side='right', anchor='e', fill='y')
-##  	self.Output = Tkinter.Text(ioframe, name="iobox", state='disabled',
-##  				   yscrollcommand=scrollY.set)
-##  	self.Output.pack(side='left', anchor='se',
-##  			 expand=1, fill='both')
+##          scrollY = Tkinter.Scrollbar(ioframe, name="ioscrollbar")
+##          scrollY.pack(side='right', anchor='e', fill='y')
+##          self.Output = Tkinter.Text(ioframe, name="iobox", state='disabled',
+##                                     yscrollcommand=scrollY.set)
+##          self.Output.pack(side='left', anchor='se',
+##                           expand=1, fill='both')
         scrollY['command'] = self.Output.yview
         self.Output.bind('<Button-3>', self.DoLocateSector)
         self.Output.bind('<Configure>', (lambda e, s=self.Output:
                                          s.see('end')))
-##  	# Windows hack!
-##  	bindFocus(self.Output)
+##          # Windows hack!
+##          bindFocus(self.Output)
 
         pane = Tk_Pane.paned(self.Root, mapframe, ioframe)
         self.Balloon.bind(pane.Grip, "Resize window")
@@ -224,10 +224,10 @@ class mainWin:
         Tk_VDB.setTextOptions(self.Output,
                               ('data', 'prompt', 'command', 'flush',
                                'subcommand', 'flash', 'inverse', 'error'))
-##	self.lwrite(('data', 'data'), "\n", ('prompt :', 'prompt'),
-##		    ('command', 'command'), "\n",
-##		    ('subprompt :', 'subprompt'),
-##		    ('subcommand', 'subcommand'), "\n", ('flash', 'flash'))
+##        self.lwrite(('data', 'data'), "\n", ('prompt :', 'prompt'),
+##                    ('command', 'command'), "\n",
+##                    ('subprompt :', 'subprompt'),
+##                    ('subcommand', 'subcommand'), "\n", ('flash', 'flash'))
 
         self.loginCallback = LoginWin.loginWin()
         self.telegramWindow = TeleWin.teleWin()
@@ -294,7 +294,7 @@ class mainWin:
         end = win.search("[^-0-9,]|$", pos, regexp=1)
         mm = self.sectorFormat.search(win.get(start, end))
         if mm:
-            x, y = map(int, mm.groups())
+            x, y = list(map(int, mm.groups()))
             self.cen.SetSect((x, x, y, y))
         else:
             self.Root.bell()
@@ -307,7 +307,7 @@ class mainWin:
         """Send the internal message queue to the Tk interface."""
         self.Output.setEditable(1)
         self.msgQueue[:0] = ['end']
-        apply(self.Output.insert, tuple(self.msgQueue))
+        self.Output.insert(*tuple(self.msgQueue))
 
         # Delete any lines in excess of 1000
         self.Output.delete('1.0', 'end - 1000 lines')
@@ -338,7 +338,7 @@ class mainWin:
     def data(self, msg):
         """empQueue handler: Process a line of server data."""
         # Check for empire display protocols.
-        ochr = map(ord, msg)
+        ochr = list(map(ord, msg))
         if 7 in ochr:
             # Found bell characters
             num = ochr.count(7)
@@ -346,12 +346,12 @@ class mainWin:
                 ochr.remove(7)
                 self.Root.bell()
             # Remove bell characters from input
-            msg = string.join(map(chr, ochr), '')
+            msg = ''.join(map(chr, ochr))
         l = len(ochr)
-        t = map(operator.and_, [128]*l, ochr)
+        t = list(map(operator.and_, [128]*l, ochr))
         if 128 in t:
             # Found inverse video characters
-            ochr = map(chr, map(operator.and_, [~128]*l, ochr))
+            ochr = list(map(chr, list(map(operator.and_, [~128]*l, ochr))))
             names = (('data', 128), ('inverse', 0))
             n = 0
             cont = 1
@@ -362,7 +362,7 @@ class mainWin:
                 except ValueError:
                     pos = len(t)
                     cont = 0
-                lst[len(lst):] = [string.join(ochr, "")[:pos], names[n][0]]
+                lst[len(lst):] = ["".join(ochr)[:pos], names[n][0]]
                 del t[:pos], ochr[:pos]
                 n = n ^ 1
             self.msgQueue[len(self.msgQueue):] = lst
@@ -375,7 +375,7 @@ class mainWin:
         """empQueue handler: Handle a subprompt."""
         mm = self.sectorFormat.search(msg)
         if mm:
-            self.markSectors([map(int, mm.groups())], 'prompt')
+            self.markSectors([list(map(int, mm.groups()))], 'prompt')
         self.msgQueue[len(self.msgQueue):] = [
             "\n", '', msg, 'flush']
         if hdl is not None:
@@ -391,7 +391,7 @@ class mainWin:
             # Hack! Only beep when syncing
             and not self.queueStatus.burst.get()):
             self.Root.bell()
-## 	self.delStatus('subprompt')
+##         self.delStatus('subprompt')
         if msg is not None:
             self.msgQueue[len(self.msgQueue):] = [msg, 'subcommand']
         self.atPrompt = 0
@@ -412,7 +412,7 @@ class mainWin:
             self.displayMsgs()
 
         # Update the graphical displays.
-        if filter(None, empDb.updateDB.values()):
+        if [_f for _f in list(empDb.updateDB.values()) if _f]:
             self.redraw()
 
     def inform(self):
@@ -461,7 +461,7 @@ class mainWin:
             self.CmdPrompt['anchor'] = 'nw'
             self.CmdPrompt['text'] = self.stsList[0][0]
             self.Status['state'] = 'normal'
-##  	    self.Status['relief'] = 'sunken'
+##              self.Status['relief'] = 'sunken'
             self.Status.delete(0, 'end')
             if focus:
                 self.Status.focus()
@@ -484,7 +484,7 @@ class mainWin:
                 self.CmdPrompt['text'] = self.stsList[0][0]
             else:
                 self.Status['state'] = 'disabled'
-##  		self.Status['relief'] = 'flat'
+##                  self.Status['relief'] = 'flat'
                 self.CmdPrompt['anchor'] = 'ne'
                 self.CmdPrompt['text'] = ""
                 self.Prompt.focus()
@@ -515,7 +515,7 @@ class mainWin:
     def startConn(self):
         """Login callback:  Establish the socket connection."""
         viewer.Root.createfilehandler(self.ioq,
-                                      Tkinter.tkinter.READABLE,
+                                      tkinter._tkinter.READABLE,
                                       self.HandleSock)
 
     def stopConn(self):
@@ -531,7 +531,7 @@ class mainWin:
         win.bind('<Key>', (lambda e:
                            (not e.char or
                             e.widget.focus_get().__class__ in (
-                                MyText.MyText, Tkinter.Entry))
+                                MyText.MyText, tkinter.Entry))
                            or viewer.Root.focus_lastfor().focus()
                            or viewer.Root.event_generate('<Key>',
                                                          state=e.state,
@@ -556,13 +556,13 @@ class mainWin:
         for i in self.updateList:
             i.redraw(total)
         # Clear the update database.
-        for i in filter(None, empDb.updateDB.values()):
+        for i in [_f for _f in list(empDb.updateDB.values()) if _f]:
             i.clear()
 
     def markSectors(self, *args):
         """Send markSectors request to all maps."""
         for i in self.mapList:
-            apply(i.markSectors, args)
+            i.markSectors(*args)
 
     def HandleSock(self, file, mask):
         """Tk file callback:  Process pending socket data."""
@@ -586,11 +586,11 @@ class mainWin:
         # Enter Tk mainloop.
         self.Root.mainloop()
 
-## 	while 1:
-## 	    pending = select.select([self.ioq], [], [], .1)[0]
-## 	    self.root.update()
-## 	    if pending:
-## 		self.HandleSock()
+##         while 1:
+##             pending = select.select([self.ioq], [], [], .1)[0]
+##             self.root.update()
+##             if pending:
+##                 self.HandleSock()
 
 # # The following commands are callback functions for the EmpCmd
 # # interface.  They define client-side synthetic commands that are
@@ -605,38 +605,38 @@ class CmdDisp(empCmd.baseCommand):
     commandUsage = ("Disp [<commodity> <sectors>"
                     " [min <min value>] [max <max value>]]")
     commandFormat = re.compile(
-	r"^(?P<comm>\S+)\s+(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?(\s+min\s+(?P<vmin>\d+))?(\s+max\s+(?P<vmax>\d+))?\s*$|^$")
+        r"^(?P<comm>\S+)\s+(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?(\s+min\s+(?P<vmin>\d+))?(\s+max\s+(?P<vmax>\d+))?\s*$|^$")
     def receive(self):
-	mm = self.parameterMatch
-	if not mm.group('sectors'):
-	    # Disable highlighting
-	    viewer.markSectors([], "disp")
-	    return
-	try:
-	    list = empEval.getSectors(
-		"owner==-1 and " + empEval.selectToExpr('SECTOR',
-		    mm.group('sectors'),
-		    mm.group('selectors')),
-		'SECTOR')
-	except empEval.error, e:
-	    viewer.Error(e)
-	else:
-	    for i in viewer.mapList:
-	    	i.Map.delete("disp");
+        mm = self.parameterMatch
+        if not mm.group('sectors'):
+            # Disable highlighting
+            viewer.markSectors([], "disp")
+            return
+        try:
+            list = empEval.getSectors(
+                "owner==-1 and " + empEval.selectToExpr('SECTOR',
+                    mm.group('sectors'),
+                    mm.group('selectors')),
+                'SECTOR')
+        except empEval.error as e:
+            viewer.Error(e)
+        else:
+            for i in viewer.mapList:
+                    i.Map.delete("disp");
 
-	    try: commodity = empEval.commodityTransform[mm.group('comm')]
-	    except KeyError: commodity = mm.group('comm')
+            try: commodity = empEval.commodityTransform[mm.group('comm')]
+            except KeyError: commodity = mm.group('comm')
 
             vmin = None
             vmax = None
             
             for coord in list:
-		DB = empDb.megaDB['SECTOR'][coord] 
-		val = DB.get(commodity, 0)
-		if vmin is None or val < vmin:
-		    vmin = val
+                DB = empDb.megaDB['SECTOR'][coord] 
+                val = DB.get(commodity, 0)
+                if vmin is None or val < vmin:
+                    vmin = val
                 if vmax is None or val > vmax:
-		    vmax = val
+                    vmax = val
 #            print vmin, vmax
 
             try:
@@ -654,22 +654,22 @@ class CmdDisp(empCmd.baseCommand):
             if uvmax < vmax:
                 vmax = uvmax
                 
-	    if(vmin >= vmax) :
-		vmax = vmin + 1
+            if(vmin >= vmax) :
+                vmax = vmin + 1
 
-	    vmax = vmax - vmin
+            vmax = vmax - vmin
 
             for coord in list:
-		DB = empDb.megaDB['SECTOR'][coord] 
-		val = DB.get(commodity, 0)
-		nval = max(0, min(val - vmin, vmax))
-                print nval
-		scale = nval * 255 / vmax
-		color = "#%02x%02x00" % ( 0x80 + scale/2, scale )
-		for i in viewer.mapList:
-			x, y = i.getCoord(tuple(coord))
-			if(val > 0) :
-			    i.drawItem(x, y, "disp", "Mark", tags="disp", fill=color, outline=color)
+                DB = empDb.megaDB['SECTOR'][coord] 
+                val = DB.get(commodity, 0)
+                nval = max(0, min(val - vmin, vmax))
+                print(nval)
+                scale = nval * 255 / vmax
+                color = "#%02x%02x00" % ( 0x80 + scale/2, scale )
+                for i in viewer.mapList:
+                        x, y = i.getCoord(tuple(coord))
+                        if(val > 0) :
+                            i.drawItem(x, y, "disp", "Mark", tags="disp", fill=color, outline=color)
 
 class CmdSect(empCmd.baseCommand):
     description = "Highlight specified sectors on main map."
@@ -692,25 +692,25 @@ class CmdSect(empCmd.baseCommand):
                     mm.group('sectors'),
                     mm.group('selectors')),
                 'SECTOR')
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
         else:
             viewer.markSectors(list, "sect")
 
 ##     def CmdBurstAll(self, ioq, match, out):
-## 	"""Put the Tk interface into burst mode."""
-## 	if match.args == 'on':
-## 	    ioq.preFlags = ioq.postFlags = empQueue.QU_BURST
-## 	elif match.args == 'off':
-## 	    ioq.preFlags = ioq.postFlags = empQueue.QU_SYNC
-## 	    if self.atPrompt == 2:
-## 		self.delStatus('subprompt')
+##         """Put the Tk interface into burst mode."""
+##         if match.args == 'on':
+##             ioq.preFlags = ioq.postFlags = empQueue.QU_BURST
+##         elif match.args == 'off':
+##             ioq.preFlags = ioq.postFlags = empQueue.QU_SYNC
+##             if self.atPrompt == 2:
+##                 self.delStatus('subprompt')
 
 ###########################################################################
-#############################  Startup	      #############################
+#############################  Startup              #############################
 
 # Open the display
-Display = Tkinter.Tk(None, None, "Ptkei")
+Display = tkinter.Tk(None, None, "Ptkei")
 Pmw.initialise(Display)
 
 ##  bindFocus = empQueue.doNothing
@@ -730,7 +730,7 @@ if os.name == 'posix':
 
     # Hack! Set the default font for entry/listbox to be the same as the text
     # box.
-    f = Tkinter.Text()
+    f = tkinter.Text()
     Display.option_add("*Entry.font", f['font'], 'widgetDefault')
     Display.option_add("*Listbox.font", f['font'], 'widgetDefault')
     f.destroy()
@@ -744,25 +744,30 @@ elif os.name == 'nt':
 
 ##      print "PTkEI: Using Windows text selection hack."
 ##      def setFocus(event):
-##  	event.widget.OldFocus = event.widget.focus_lastfor()
-##  	event.widget.focus()
+##          event.widget.OldFocus = event.widget.focus_lastfor()
+##          event.widget.focus()
 
 ##      def unsetFocus(event):
-##  	if hasattr(event.widget, 'OldFocus'):
-##  	    event.widget.OldFocus.focus()
-##  	    del event.widget.OldFocus
+##          if hasattr(event.widget, 'OldFocus'):
+##              event.widget.OldFocus.focus()
+##              del event.widget.OldFocus
 
 ##      def bindFocus(win):
-##  	win.bind('<Button-1>', setFocus)
-##  	win.bind('<ButtonRelease-1>', unsetFocus)
+##          win.bind('<Button-1>', setFocus)
+##          win.bind('<ButtonRelease-1>', unsetFocus)
 
 
 # Handle platforms that don't support the Tcl file handler
 def InitFileHandler():
     global viewer
 
-    if Tkinter.tkinter.createfilehandler is None:
-        print "PTkEI: Using emulated file handlers."
+    viewer.Root.createfilehandler = viewer.Root.tk.createfilehandler
+    viewer.Root.deletefilehandler = viewer.Root.tk.deletefilehandler 
+    viewer.Root.createtimerhandler = viewer.Root.tk.createtimerhandler 
+    return
+
+    if tkinter._tkinter.createfilehandler is None:
+        print("PTkEI: Using emulated file handlers.")
         def bogusFileHandler(file, mask, hdlr):
             global bogusFileTimer
             def hdl(file=file, mask=mask, hdlr=hdlr):

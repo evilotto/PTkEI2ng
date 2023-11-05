@@ -145,7 +145,7 @@ def updateDesignations(lst, mapType):
     DB = empDb.megaDB['SECTOR']
     changes = []
     for col, row, t in lst:
-        if t not in ' ?X' and not empDb.megaDB['sectortype'].has_key(t):
+        if t not in ' ?X' and t not in empDb.megaDB['sectortype']:
             # Exclusion of all sector designations that aren't actual
             # designations.  Still buggy as it doesn't handle bmaps. 
             continue
@@ -154,7 +154,7 @@ def updateDesignations(lst, mapType):
         olddes = ldict.get('des')
         ndict = {}
         if( empDb.assist == 1 and ( t == '?' or t == '-' or t == 's' )):
-            print "Land: a",t,"at",col,",",row,"owned by",oldown
+            print("Land: a",t,"at",col,",",row,"owned by",oldown)
         if t == 'X' and mapType != 'bmap':
             continue
         if t == 'X' and mapType == 'bmap' and olddes == '.':
@@ -265,7 +265,7 @@ def convertOldOwner(s, field):
 def composeHeader(translations, *args):
     """Convert a series of string headers into a list of named qualifiers."""
     num = len(args)
-    lastColumns = string.split(args[-1], ' ')
+    lastColumns = args[-1].split()
     startcut = 0
     new = []
 
@@ -275,12 +275,12 @@ def composeHeader(translations, *args):
     # column using the last row's field spacing as a guide.)
     for segment in lastColumns:
         endcut = startcut + len(segment)
-        new.append(string.lstrip(string.join(
-            map(string.strip,
-                map(operator.getslice, args, (startcut,)*num, (endcut,)*num)),
-            "\n")))
+        new.append("\n".join(
+            list(map(string.strip,
+                list(map(operator.getslice, args, (startcut,)*num, (endcut,)*num))))
+            ).lstrip())
         startcut = endcut + 1
-    new = filter(None, new)
+    new = [_f for _f in new if _f]
 ##     print new
 
     # Now create a list of database keys for each of the header lines from
@@ -304,7 +304,7 @@ def composeHeader(translations, *args):
 
 def composeBody(hdr, msg):
     """Convert the body of a message that has a header HDR."""
-    strs = string.split(msg)
+    strs = msg.split()
     convertList(strs)
     if len(strs) == len(hdr):
         # Standard table format
@@ -417,18 +417,18 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
 
     if found == 1:
         # A ship
-        x, y, id = map(int,
-                       mm.group('sectorX', 'sectorY', 'shipId'))
+        x, y, id = list(map(int,
+                       mm.group('sectorX', 'sectorY', 'shipId')))
         empDb.megaDB['SHIPS'].updates([
             {'id': id, 'type':mm.group('shipType'),
              'x': x, 'y': y, 'owner':own}])
     elif found == 2:
-        x, y, id = map(int, mm.group('sectorX', 'sectorY', 'landId'))
+        x, y, id = list(map(int, mm.group('sectorX', 'sectorY', 'landId')))
         empDb.megaDB['LAND UNITS'].updates([
             {'id': id, 'type':mm.group('landType'),
              'x': x, 'y': y, 'owner':own}])
     elif found == 3:
-        x, y, id = map(int, mm.group('sectorX', 'sectorY', 'planeId'))
+        x, y, id = list(map(int, mm.group('sectorX', 'sectorY', 'planeId')))
         empDb.megaDB['PLANES'].updates([
             {'id': id, 'type':mm.group('planeType'),
              'x': x, 'y': y, 'owner':own}])
@@ -436,8 +436,8 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
         lst = {'civ':0, 'mil':0}
         composePreamble(lst, look_stats, mm.group('sectorStats'),
                         {'civ':zeroIsOne, 'mil':zeroIsOne})
-        x, y, eff = map(int,
-                        mm.group('sectorX', 'sectorY', 'eff'))
+        x, y, eff = list(map(int,
+                        mm.group('sectorX', 'sectorY', 'eff')))
         lst.update({'des': sectorNameConvert[mm.group('sectorName')],
                     'eff': eff, 'owner': own,
                     'x': x, 'y': y})
@@ -474,13 +474,13 @@ sectorDesignationConvert = {
 
 # Translate full sector names to their abbreviations.
 sectorNameConvert = {}
-map(operator.setitem,
+list(map(operator.setitem,
     (sectorNameConvert,) * len(sectorDesignationConvert),
-    sectorDesignationConvert.values(),
-    sectorDesignationConvert.keys())
+    list(sectorDesignationConvert.values()),
+    list(sectorDesignationConvert.keys())))
 # Create a regular expression that accepts full sector names.
 s_sectorName = (r"(?P<sectorName>"+
-                string.join(sectorDesignationConvert.values(), '|')+")")
+                '|'.join(list(sectorDesignationConvert.values()))+")")
 
 def convertList(dlist):
     """Convert a list of strings to native types."""
@@ -495,7 +495,7 @@ def convertList(dlist):
             try:
                 val = int(val)
             except OverflowError:
-                val = long(val)
+                val = int(val)
             except ValueError:
                 continue
         dlist[i] = val
@@ -577,13 +577,12 @@ class ParseDump(baseDisp):
 
                 self.getheader = 1
             elif self.getheader == 1:
-                self.Hlist = string.split(msg)
+                self.Hlist = msg.split()
                 self.getheader = 0
                 # HACK! Check for the existence of "difficult" fields
                 self.oldownerHack = []
                 self.nameHack = []
-                for fieldname, pos in map(None, self.Hlist,
-                                          range(len(self.Hlist))):
+                for pos, fieldname in enumerate(self.Hlist):
                     if fieldname == "*":
                         self.Hlist[pos] = "oldown"
                         self.oldownerHack.append(pos)
@@ -601,7 +600,7 @@ class ParseDump(baseDisp):
             self.Hlist = None
             return
 
-        Dlist = string.split(msg)
+        Dlist = msg.split()
         l = len(Dlist)
         # HACK! Fix problem with 'name' field
         if l >= len(self.Hlist):
@@ -611,8 +610,8 @@ class ParseDump(baseDisp):
                     end = end + 1
                 while Dlist[end][-1] != '"':
                     end = end + 1
-##              print start, end, string.join(Dlist[start:end+1])
-                Dlist[start:end+1] = [string.join(Dlist[start:end+1])[1:-1]]
+##              print start, end, ''.join(Dlist[start:end+1])
+                Dlist[start:end+1] = [''.join(Dlist[start:end+1])[1:-1]]
                 l = l - (end-start)
         if l == len(self.Hlist):
             # Normal line
@@ -621,7 +620,7 @@ class ParseDump(baseDisp):
             convertList(Dlist)
 
             DDict = {'owner':CN_OWNED}
-            map(operator.setitem, [DDict]*l, self.Hlist, Dlist)
+            list(map(operator.setitem, [DDict]*l, self.Hlist, Dlist))
             # HACK! Fix annoying '*' field
             if self.oldownerHack:
                 if DDict['oldown'] == '.':
@@ -650,16 +649,16 @@ class ParseDump(baseDisp):
             # A full dump
             others = self.DB.updates(self.updateList, 1)
 ##          others = self.DB.updates(listDict, 1)
-            list = []
-            for i in others.values():
+            ulist = []
+            for i in list(others.values()):
                 if i.get('owner') == CN_OWNED:
                     dict = i.copy()
                     dict.update({'owner':CN_UNOWNED})
-                    list.append(dict)
-            self.DB.updates(list)
+                    ulist.append(dict)
+            self.DB.updates(ulist)
         # Merge lost database with normal databases.
         if self.lost:
-            for i in empDb.updateDB['LOST ITEMS'].values():
+            for i in list(empDb.updateDB['LOST ITEMS'].values()):
                 subDB = (('SECTOR', 'x', 'y'), ('SHIPS', 'id'),
                          ('PLANES', 'id'), ('LAND UNITS', 'id'),
                          ('NUKES', 'x', 'y'))[i['type']]
@@ -717,12 +716,12 @@ class ParseMap(baseDisp):
             elif self.Mpos == 1:
                 # Additional lines of header
                 msg_b = string.replace(msg_b, "-", "0")
-                self.Mhead = map(operator.add, self.Mhead, msg_b)
+                self.Mhead = list(map(operator.add, self.Mhead, msg_b))
         else:
             if self.Mpos == 1:
                 # First line of data - convert alphanumeric columns to numeric
                 self.Mpos = 2
-                cols = map(int, self.Mhead)
+                cols = list(map(int, self.Mhead))
                 if len(cols) == 1:
                     # Can't accurately parse maps with 1 column
                     self.Mpos = -1
@@ -764,7 +763,7 @@ class ParseMove(baseDisp):
     def data(self, msg):
         mm = self.ownSector.match(msg)
         if mm:
-            x, y = map(int, mm.group('sectorX', 'sectorY'))
+            x, y = list(map(int, mm.group('sectorX', 'sectorY')))
             empDb.megaDB['SECTOR'].updates(
                 [{'x': x, 'y': y, 'owner':CN_OWNED}])
         self.map.append(msg)
@@ -781,7 +780,7 @@ class ParseMove(baseDisp):
             sects = []
             for i in self.map[-3:]:
                 sects.append(i[3:8])
-            coord = map(int, mm.group('sectorX', 'sectorY'))
+            coord = list(map(int, mm.group('sectorX', 'sectorY')))
             parseStarMap(sects, coord, '')
 
 s_landIdent = r"(?P<landType>\S+)(?:.+)? #(?P<landId>\d+)"
@@ -840,7 +839,7 @@ class ParseUnits(baseDisp):
         mm = self.sonar_info.match(msg)
         if mm:
             shipMisc = mm.group('shipMisc')
-            item = string.split(shipMisc)
+            item = shipMisc.split()
             if len(item) > 3:
                 own = item[0]
                 type = item[1]
@@ -848,14 +847,14 @@ class ParseUnits(baseDisp):
                 own = CN_ENEMY
                 type = item[0]
             else:
-                if empDb.megaDB['countries'].nameList.has_key(item[0]):
+                if item[0] in empDb.megaDB['countries'].nameList:
                     own = item[0]
                     type = item[1]
                 else:
                     own = CN_ENEMY
                     type = item[0]
-            x,y,id = map(int,mm.group('sectorX', 'sectorY',
-                                              'shipId'))
+            x,y,id = list(map(int,mm.group('sectorX', 'sectorY',
+                                              'shipId')))
             owner = empDb.megaDB['countries'].resolveName(
                 own, 'SHIPS', (id,))
             empDb.megaDB['SHIPS'].updates([
@@ -867,8 +866,8 @@ class ParseUnits(baseDisp):
         if mm:
             own = CN_ENEMY
             if mm.group('shipId'):
-                x,y,id = map(int,mm.group('sectorX', 'sectorY',
-                                                  'shipId'))
+                x,y,id = list(map(int,mm.group('sectorX', 'sectorY',
+                                                  'shipId')))
                 empDb.megaDB['SHIPS'].updates([
                     {'id': id, 'type': 'sb',
                      'x': x, 'y': y, 'owner':own}])
@@ -876,8 +875,8 @@ class ParseUnits(baseDisp):
             return
         mm = self.sonar_mines.match(msg)
         if mm:
-            x, y, mines = map(int,
-                            mm.group('sectorX', 'sectorY', 'mines'))
+            x, y, mines = list(map(int,
+                            mm.group('sectorX', 'sectorY', 'mines')))
             if mines is not None:
                 empDb.megaDB['SECTOR'].updates([
                      {'x': x, 'y': y, 'mine': mines}])
@@ -888,7 +887,7 @@ class ParseUnits(baseDisp):
             mines = int(mm.group('mines'))
             uid = mm.group('shipId')
             DB = DB = empDb.megaDB['SHIPS']
-            lst = DB.keys()
+            lst = list(DB.keys())
             lst.sort()
             for key in lst:
                 unit = DB[key]
@@ -897,7 +896,7 @@ class ParseUnits(baseDisp):
                     y = int(unit['y'])
 #                   coord = str("%d, %d" % (x,y))
                     sdb = empDb.megaDB['SECTOR']
-                    lst = sdb.keys()
+                    lst = list(sdb.keys())
                     lst.sort()
                     for key in lst:
                         if sdb[key]['x'] == x and sdb[key]['y'] == y:
@@ -916,9 +915,9 @@ class ParseUnits(baseDisp):
             return
         mm = self.drop_mine.match(msg)
         if mm:
-            mines, x, y = map(int, mm.group('mines','sectorX', 'sectorY'))
+            mines, x, y = list(map(int, mm.group('mines','sectorX', 'sectorY')))
             sdb = empDb.megaDB['SECTOR']
-            lst = sdb.keys()
+            lst = list(sdb.keys())
             lst.sort()
             for key in lst:
                 if sdb[key]['x'] == x and sdb[key]['y'] == y:
@@ -952,7 +951,7 @@ class ParseUnits(baseDisp):
                 del self.coord
                 self.Map = []
                 self.num = None
-            if string.find(msg, '0') > -1 :
+            if msg.find('0') > -1 :
                 s = ""
                 while len(s) < len(msg) :
                     s = s + " "
@@ -962,7 +961,7 @@ class ParseUnits(baseDisp):
         # Check for start of radar
         mm = self.start_radar.match(msg)
         if mm:
-            self.coord = map(int, mm.group('sectorX', 'sectorY'))
+            self.coord = list(map(int, mm.group('sectorX', 'sectorY')))
             self.num = int(mm.group('dist'))*2+1
             self.Map = []
             return
@@ -972,8 +971,8 @@ class ParseUnits(baseDisp):
             lst = {}
             composePreamble(lst, self.view_stats, mm.group('viewStats'),
                             {'oil':'ocontent','fert':'fert'})
-            x, y, eff = map(int,
-                            mm.group('sectorX', 'sectorY', 'eff'))
+            x, y, eff = list(map(int,
+                            mm.group('sectorX', 'sectorY', 'eff')))
             lst.update({'des': sectorNameConvert[mm.group('sectorName')],
                         'eff': eff, 'owner': CN_OWNED, 'x': x, 'y': y})
             empDb.megaDB['SECTOR'].updates([lst])
@@ -988,15 +987,15 @@ class ParseUnits(baseDisp):
         if mm:
             if mm.group('shipId'):
                 # A ship
-                x, y, id = map(int,
-                               mm.group('sectorX', 'sectorY', 'shipId'))
+                x, y, id = list(map(int,
+                               mm.group('sectorX', 'sectorY', 'shipId')))
                 empDb.megaDB['SHIPS'].updates(
                     [{'id': id, 'type':mm.group('shipType'),
                       'owner':CN_OWNED, 'x': x, 'y': y}])
             else:
                 # A land unit
-                x, y, id = map(int,
-                               mm.group('sectorX', 'sectorY', 'landId'))
+                x, y, id = list(map(int,
+                               mm.group('sectorX', 'sectorY', 'landId')))
                 empDb.megaDB['LAND UNITS'].updates(
                     [{'id': id, 'type':mm.group('landType'),
                       'owner':CN_OWNED, 'x': x, 'y': y}])
@@ -1012,7 +1011,7 @@ class ParseUnits(baseDisp):
         self.out.flush(msg, hdl)
         mm = self.nav_prompt.match(msg)
         if mm:
-            self.coord = map(int, mm.group('sectorX', 'sectorY'))
+            self.coord = list(map(int, mm.group('sectorX', 'sectorY')))
             if len(self.Map) == 3:
                 parseStarMap(self.Map, self.coord, 'radar')
 
@@ -1032,7 +1031,7 @@ class ParseUnits(baseDisp):
             i = -1
             for msg in self.Map[:]:
                 i = i + 1
-                if string.find(msg, "0") > -1 :
+                if msg.find("0") > -1 :
                     while i < (self.num - 1) / 2 :
                         self.Map.insert(0, "")
                         i = i + 1
@@ -1121,9 +1120,9 @@ class ParseSpy(baseDisp):
             if mt:
                 lst = {}
                 composePreamble(lst, self.unitStats, mt.group('unitStats'))
-                lst['x'], lst['y'], id = map(
+                lst['x'], lst['y'], id = list(map(
                     int,
-                    mt.group('sectorX', 'sectorY', 'landId'))
+                    mt.group('sectorX', 'sectorY', 'landId')))
                 lst['id'] = id
                 lst['type'] = mt.group('landType')
                 lst['owner'] = empDb.megaDB['countries'].resolveName(
@@ -1157,8 +1156,8 @@ class ParseAttack(baseDisp):
         self.out.data(msg)
         mm = self.attackInfo.match(msg)
         if mm:
-            x, y, eff, mil = map(int,
-                                 mm.group('sectorX', 'sectorY', 'eff', 'mil'))
+            x, y, eff, mil = list(map(int,
+                                 mm.group('sectorX', 'sectorY', 'eff', 'mil')))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y,
                 'owner':empDb.megaDB['countries'].resolveName(
@@ -1168,22 +1167,22 @@ class ParseAttack(baseDisp):
             return
         mm = self.sectorTake.match(msg)
         if mm:
-            x, y = map(int, mm.group('sectorX', 'sectorY'))
+            x, y = list(map(int, mm.group('sectorX', 'sectorY')))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y, 'owner': CN_OWNED}])
             return
         mm = self.unitMove.match(msg)
         if mm:
-            x, y, id = map(int,
-                           mm.group('sectorX', 'sectorY', 'landId'))
+            x, y, id = list(map(int,
+                           mm.group('sectorX', 'sectorY', 'landId')))
             empDb.megaDB['LAND UNITS'].updates([{
                 'id': id, 'type':mm.group('landType'),
                 'owner':CN_OWNED, 'x': x, 'y': y}])
             return
         mm = self.milMove.match(msg)
         if mm:
-            x, y, mil = map(int,
-                            mm.group('sectorX', 'sectorY', 'mil'))
+            x, y, mil = list(map(int,
+                            mm.group('sectorX', 'sectorY', 'mil')))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y, 'owner':CN_OWNED, 'mil': mil}])
 
@@ -1249,7 +1248,7 @@ class ParseSate(baseDisp):
         elif self.pos == 1:
             mm = self.rangeLine.match(msg)
             if mm:
-                self.coord = map(int, mm.group('sectorX', 'sectorY'))
+                self.coord = list(map(int, mm.group('sectorX', 'sectorY')))
                 self.range = int(mm.group('range'))*2+1
                 self.pos = 2
         elif self.pos == 2:
@@ -1268,7 +1267,7 @@ class ParseSate(baseDisp):
                 parseStarMap(self.buf, self.coord, self.type)
                 self.pos = -1
         elif self.pos == 4: # sectors
-            item = string.split(string.strip(msg))
+            item = msg.split()
             if len(item) == 2:
                 self.pos = 2
             else:
@@ -1288,7 +1287,7 @@ class ParseSate(baseDisp):
                 val['food'] = int(item[13])
                 empDb.megaDB['SECTOR'].updates([val])
         elif self.pos == 5: # ships
-            item = string.split(string.strip(msg))
+            item = msg.split()
             if len(item) == 2:
                 self.pos = 2
             else:
@@ -1299,7 +1298,7 @@ class ParseSate(baseDisp):
                 val['eff'] = int(item[-1][:-1])
                 empDb.megaDB['SHIPS'].updates([val])
         elif self.pos == 6: # land units
-            item = string.split(string.strip(msg))
+            item = msg.split()
             if len(item) == 2:
                 self.pos = 2
             else:
@@ -1324,9 +1323,9 @@ class ParseBuild(baseDisp):
         if mm:
             if mm.group('shipId'):
                 # A ship
-                x, y, id = map(
+                x, y, id = list(map(
                     int,
-                    mm.group('sectorX', 'sectorY', 'shipId'))
+                    mm.group('sectorX', 'sectorY', 'shipId')))
                 empDb.megaDB['SHIPS'].updates(
                     [{'id': id, 'type':mm.group('shipType'),
                       'owner':CN_OWNED, 'x': x, 'y': y}])
@@ -1344,7 +1343,7 @@ class ParseBuild(baseDisp):
                     des = '@'
                 else:
                     des = '='
-                x, y = map(int, mm.group('sectorX', 'sectorY'))
+                x, y = list(map(int, mm.group('sectorX', 'sectorY')))
                 empDb.megaDB['SECTOR'].updates(
                     [{'owner':0, 'x': x, 'y': y, 'des':des}])
 
@@ -1374,7 +1373,7 @@ class ParseReport(baseDisp):
             empDb.megaDB['time'].noteTime(mm)
             return
         self.out.data(msg)
-        line = string.split(msg)
+        line = msg.split()
         try:
             id = int(line[0])
         except ValueError:
@@ -1458,7 +1457,7 @@ class ParseTele(baseDisp):
     def End(self, cmd):
         self.out.End(cmd)
         if self.to is not None and self.pos is not None:
-            msg = string.split(self.buf, '\n')
+            msg = self.buf.split('\n')
             del msg[-1]
             msg[:0] = ["> Telegram to "+self.to]
             if msg[-1] == '.':
@@ -1649,8 +1648,7 @@ class ParseVersion(baseDisp):
                 self.opts.sort()
                 checkUpdated('version', name, self.opts)
                 self.pos = 0
-            self.opts[:0] = filter(
-                None, map(string.strip, string.split(msg, ',')))
+            self.opts[:0] = msg.split(',')
             return
         mm = self.versionVars.match(msg)
         if mm is None:
@@ -1723,19 +1721,19 @@ class ParseVersion(baseDisp):
             checkUpdated('version', 'techBase', float(tafter))
         elif Omax is not None:
             val = []
-            for i in string.split(Omax):
+            for i in Omax.split():
                 if i == '--': val.append(99999)
                 else: val.append(int(i))
             checkUpdated('version', 'objectMax', val)
         elif Omob is not None:
             val = []
-            for i in string.split(Omob):
+            for i in Omob.split():
                 if i == '--': val.append(99999)
                 else: val.append(int(i))
             checkUpdated('version', 'objectMob', val)
         elif Oeff is not None:
             val = []
-            for i in string.split(Oeff):
+            for i in Oeff.split():
                 if i == '--': val.append(99999)
                 else: val.append(int(i))
             checkUpdated('version', 'objectEff', val)
@@ -1909,7 +1907,7 @@ class ParseSpyPlane(baseDisp):
             else:
                 info = self.seaSect.match(msg)
                 if info:
-                    x, y = map(int, info.group('sectorX', 'sectorY'))
+                    x, y = list(map(int, info.group('sectorX', 'sectorY')))
                     info = {'owner': 0, 'des': '.', 'x': x, 'y': y}
                     self.sect_changes.append(info)
 # for some reason spy planes can't see ships at sea. is this a server bug?
@@ -1930,9 +1928,9 @@ class ParseSpyPlane(baseDisp):
         elif self.mode == 5:
             info = self.uStats.match(msg)
             if info:
-                id, x, y, owner, eff = map(int,
+                id, x, y, owner, eff = list(map(int,
                                            info.group('id', 'sectorX',
-                                                      'sectorY', 'own', 'eff'))
+                                                      'sectorY', 'own', 'eff')))
                 if owner == empDb.megaDB['countries'].player:
                     owner = CN_OWNED
                 ship_info = {'id': id, 'type':info.group('type'), 'x': x,
@@ -1944,9 +1942,9 @@ class ParseSpyPlane(baseDisp):
         elif self.mode == 6:
             info = self.uStats.match(msg)
             if info:
-                id, x, y, owner, eff = map(int,
+                id, x, y, owner, eff = list(map(int,
                                            info.group('id', 'sectorX',
-                                                      'sectorY', 'own', 'eff'))
+                                                      'sectorY', 'own', 'eff')))
                 if owner == empDb.megaDB['countries'].player:
                     owner = CN_OWNED
                 land_info = {'id': id, 'type':info.group('type'), 'x': x,
@@ -2133,28 +2131,28 @@ class ParseShow(baseDisp):
         self.what = ''
     def data(self,msg):
         self.out.data(msg)
-        if string.find(msg, 'sector type                 $   lcm  hcm     $      $') > -1:
+        if msg.find('sector type                 $   lcm  hcm     $      $') > -1:
             self.what = 'sebu'
             return
-        if string.find(msg, 'sector type            0% 100%   off   def   bility      bonus   pop') > -1 :
+        if msg.find('sector type            0% 100%   off   def   bility      bonus   pop') > -1 :
             self.what = 'sest'
             return
-        if string.find(msg, 'use1 use2 use3') > -1:
+        if msg.find('use1 use2 use3') > -1:
             self.what = 'seca'
             return
-        if string.find(msg, 'lcm hcm crew') > -1:
+        if msg.find('lcm hcm crew') > -1:
             self.what = 'plbu'
             return
-        if string.find(msg, 'lcm hcm avail') > -1:
+        if msg.find('lcm hcm avail') > -1:
             self.what = 'shbu'
             return
-        if string.find(msg, 'lcm hcm guns') > -1:
+        if msg.find('lcm hcm guns') > -1:
             self.what = 'labu'
             return
         if self.what == 'sebu':
             if len(msg) < 2 or msg[0] == ' ' or msg[1] != ' ':
                 return
-            item = string.split(msg)
+            item = msg.split()
             empDb.megaDB['sectortype'][item[0]]['cost_to_des'] =  int(item[2])
             empDb.megaDB['sectortype'][item[0]]['cost_eff'] =  int(item[5])/100
             empDb.megaDB['sectortype'][item[0]]['lcm_eff'] =  int(item[3])/100
@@ -2163,11 +2161,11 @@ class ParseShow(baseDisp):
         if self.what == 'sest':
 #wmf
             global sectorDesignationConvert, sectorNameConvert, s_sectorName, look_info
-            item = string.split(msg)
+            item = msg.split()
             type = item[0]
             item[0:1] = []
-            if empDb.megaDB['sectortype'].has_key(type) and \
-               sectorDesignationConvert.has_key(type) :
+            if type in empDb.megaDB['sectortype'] and \
+               type in sectorDesignationConvert :
                 return
             mcost = item[-7]
             [ zmcost, mcost, maxoff, maxdef, navigability, bonustype, maxpop ] = item[-7:]
@@ -2215,17 +2213,17 @@ class ParseShow(baseDisp):
                 'pack_bar': int(pack_bar),
                 'pack_other': int(pack_other),
                 'maxpop': int(maxpop) }
-            if not sectorDesignationConvert.has_key(type) \
+            if type not in sectorDesignationConvert \
                or sectorDesignationConvert[type] != name :
                 sectorDesignationConvert[type] = name
                 sectorNameConvert = {}
-                map(operator.setitem,
+                list(map(operator.setitem,
                     (sectorNameConvert,) * len(sectorDesignationConvert),
-                    sectorDesignationConvert.values(),
-                    sectorDesignationConvert.keys())
+                    list(sectorDesignationConvert.values()),
+                    list(sectorDesignationConvert.keys())))
                 # Create a regular expression that accepts full sector names.
                 s_sectorName = (r"(?P<sectorName>"+
-                                string.join(sectorDesignationConvert.values(), '|')+")")
+                                '|'.join(sectorDesignationConvert.values())+")")
                 ParseUnits.s_shipOrSector = ("(?:"+s_shipIdent+"|"
                       +s_sectorName+" "+s_eff+" efficient"+ParseUnits.s_sectorStats+")")
                 ParseUnits.view_info = re.compile(r"^(?:\[(?P<viewStats>.*?)\] )?"+s_shipIdent+" @ "
@@ -2240,7 +2238,7 @@ class ParseShow(baseDisp):
             if len(msg) < 2 or msg[0] == ' ' or msg[1] != ' ':
                 return
 
-            item = string.split(msg)
+            item = msg.split()
 
             if string.digits.find(item[-1]) > -1:
                 comout = ''
@@ -2248,7 +2246,7 @@ class ParseShow(baseDisp):
                 comout = item[-1]
                 del item[-1:]
 
-            minlevel, lag, eff, cost, dep = map(int, item[-5:])
+            minlevel, lag, eff, cost, dep = list(map(int, item[-5:]))
             del item[-5:]
 
             des = item[0]
@@ -2286,7 +2284,7 @@ class ParseShow(baseDisp):
             empDb.megaDB['sectortype'][des]['comuse'] = use[:]
             return
         if self.what == 'plbu':
-            item = string.split(msg)
+            item = msg.split()
             type = item[0]
             item[0:1] = []
             lcm, hcm, crew, avail, tech, cost = item[-6:]
@@ -2294,7 +2292,7 @@ class ParseShow(baseDisp):
             name = item[0]
             for x in item[1:] :
                 name = name + " " + x
-            if not empDb.megaDB['planetype'].has_key(type) :
+            if type not in empDb.megaDB['planetype'] :
                 empDb.megaDB['planetype'][type] = {
                     'name': name,
                     'lcm': int(lcm),
@@ -2304,7 +2302,7 @@ class ParseShow(baseDisp):
                     'tech': int(tech) }
             return
         if self.what == 'shbu':
-            item = string.split(msg)
+            item = msg.split()
             type = item[0]
             item[0:1] = []
             lcm, hcm, avail, tech, cost = item[-5:]
@@ -2312,7 +2310,7 @@ class ParseShow(baseDisp):
             name = item[0]
             for x in item[1:] :
                 name = name + " " + x
-            if not empDb.megaDB['shiptype'].has_key(type) :
+            if type not in empDb.megaDB['shiptype'] :
                 empDb.megaDB['shiptype'][type] = {
                     'name': name,
                     'lcm': int(lcm),
@@ -2321,7 +2319,7 @@ class ParseShow(baseDisp):
                     'tech': int(tech) }
             return
         if self.what == 'labu':
-            item = string.split(msg)
+            item = msg.split()
             type = item[0]
             item[0:1] = []
             lcm, hcm, gun, avail, tech, cost = item[-6:]
@@ -2329,7 +2327,7 @@ class ParseShow(baseDisp):
             name = item[0]
             for x in item[1:] :
                 name = name + " " + x
-            if not empDb.megaDB['landtype'].has_key(type) :
+            if type not in empDb.megaDB['landtype'] :
                 empDb.megaDB['landtype'][type] = {
                     'name': name,
                     'lcm': int(lcm),

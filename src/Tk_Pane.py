@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 
 ###########################################################################
 #############################  Pane interface #############################
@@ -27,14 +27,14 @@ class paned:
         self.win1 = win1
         self.win2 = win2
 
-        self.PFrame = Tkinter.Frame(root, name="pane")
+        self.PFrame = tkinter.Frame(root, name="pane")
         self.PFrame.pack(side='top', expand=1, fill='both')
         self.PFrame.lower()
 
         win1.place(in_=self.PFrame, relwidth=1.0)
         win2.place(in_=self.PFrame, relwidth=1.0)
 
-        self.Grip = Tkinter.Frame(root, name="grip", height=10, width=10,
+        self.Grip = tkinter.Frame(root, name="grip", height=10, width=10,
                           cursor='sb_v_double_arrow',
                           borderwidth=2, relief='raised')
         self.Grip.place(in_=self.PFrame, relx=0.8, rely=0.5, y=-5)

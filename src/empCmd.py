@@ -268,7 +268,7 @@ class EmpParse:
                 raise IndexError
         else:
             if cmd[:1] == "^":
-                pos = string.find(cmd, "^", 1)
+                pos = cmd.find("^", 1)
                 if pos == -1:
                     raise IndexError
                 cmd = string.replace(self.hisList[1], cmd[1:pos],
@@ -453,7 +453,7 @@ class CmdAlias(baseCommand):
                 args = self.commandMatch.group('args')
                 if args is None:
                     args = ""
-                argl = string.split(self.commandMatch.string)
+                argl = self.commandMatch.string.split()
                 cmd = ""
                 for part in range(len(sublst)):
                     val = sublst[part]
@@ -539,7 +539,7 @@ class CmdExec(baseCommand):
         lst = file.readlines()
         file.close()
         for i in lst:
-            i = string.strip(i)
+            i = i.strip()
             if not i or i[0] == '#':
                 continue
             self.Send(i, self.out)
@@ -594,7 +594,7 @@ class CmdPredict(baseCommand):
             viewer.Error("Invalid coordinates.")
             return
         DB = empDb.megaDB['SECTOR'][coord]
-        for i in string.split(empSector.sectorPredictions(DB), "\n"):
+        for i in empSector.sectorPredictions(DB).split("\n"):
             self.out.data(i)
 
 class CmdMover(baseCommand):
@@ -610,8 +610,8 @@ class CmdMover(baseCommand):
     def receive(self):
         mm = self.parameterMatch
         try:
-            sectors = map(empParse.str2Coords,
-                          string.split(mm.group('sectors')))
+            sectors = list(map(empParse.str2Coords,
+                          mm.group('sectors').split()))
             if len(sectors) < 2:
                 raise ValueError
             commodity = empEval.commodityTransform[mm.group('comd')]
@@ -673,8 +673,8 @@ class CmdRefresh(baseCommand):
         if qElem.__class__ is self.__class__:
             # Found a refresh command pending - don't send any repeated dumps
             for i in qElem.dumpList:
-                pos = string.find(self.dumpList, i)
-                if pos != -1 and string.find(self.neededDump, i) == -1:
+                pos = self.dumpList.find(i)
+                if pos != -1 and self.neededDump.find(i) == -1:
                     self.dumpList = self.dumpList[:pos] + self.dumpList[pos+1:]
                     if not self.dumpList:
                         # No dump commands left - end scan
@@ -749,7 +749,7 @@ class CmdEval(baseCommand):
                 empEval.estrToExpr(mm.group('command')),
                 type, db),
                       self.out, 1)
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
 
 class CmdForEach(baseCommand):
@@ -772,7 +772,7 @@ class CmdForEach(baseCommand):
                                                       mm.group('selectors')),
                 empEval.estrToExpr(mm.group('command')),
                 'SECTOR')
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
         else:
             for i in list:
@@ -854,7 +854,7 @@ class CmdMMove(baseCommand):
                     mm.group('sectors2'), mm.group('selectors2'))),
                 "(xloc+0,yloc+0), __db[1], int(("+dlevel+")-"+commodity+")",
                 'SECTOR')
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
             return
         
@@ -866,7 +866,7 @@ class CmdMMove(baseCommand):
         sdict = {}
         for coord, db, amount, mobility in slist:
             if (amount > 0 and mobility > 0
-                and not ddict.has_key(coord)
+                and coord not in ddict
                 and empSector.is_movable_from(db, commodity)):
                 sdict[coord] = (amount, mobility,
                                 empSector.move_weight(db, commodity))
@@ -882,7 +882,7 @@ class CmdMMove(baseCommand):
                 comm, path.start[0], path.start[1], amount,
                 path.end[0], path.end[1]),
                       self.out, 1)
-            mmove.next()
+            next(mmove)
 
 class CmdEMove(baseCommand):
 
@@ -928,7 +928,7 @@ class CmdEMove(baseCommand):
                 "(xloc+0,yloc+0), __db[1]",
                 'SECTOR')
 
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
             return
 
@@ -940,7 +940,7 @@ class CmdEMove(baseCommand):
         sdict = {}
         for coord, db, amount, mobility in slist:
             if (amount > 0 and mobility > 0
-                and not ddict.has_key(coord)
+                and coord not in ddict
                 and empSector.is_movable_from(db, commodity)):
                 sdict[coord] = (amount, mobility, 1.0)
 ##  	print "%s\n%s" % (sdict, ddict)
@@ -955,7 +955,7 @@ class CmdEMove(baseCommand):
             self.Send("explore %s %d,%d %s %sh" % (
                 comm, path.start[0], path.start[1], amount, path.directions),
                       self.out, 1)
-            mmove.next()
+            next(mmove)
 
 class CmdNova(baseCommand):
 
@@ -970,9 +970,9 @@ class CmdNova(baseCommand):
         +"\s*(?:"+empParse.s_sector2+")?\s*$")
     def receive(self):
         mm = self.parameterMatch
-        start = map(int, mm.group('sectorX', 'sectorY'))
+        start = list(map(int, mm.group('sectorX', 'sectorY')))
         if mm.group('sector2X'):
-            dest = map(int, mm.group('sector2X', 'sector2Y'))
+            dest = list(map(int, mm.group('sector2X', 'sector2Y')))
         else:
             dest = start
         if dest == start:
@@ -1132,7 +1132,7 @@ class ParseShow(empParse.baseDisp):
         # stuff to do at the end of each block, put CBody in Body
 
         if self.Body:
-            mx = max(map(len, self.Body))
+            mx = max(list(map(len, self.Body)))
         else:
             mx = 0
 
@@ -1200,7 +1200,7 @@ class RedirectOutput(empParse.baseDisp):
                 if self.type == "append":
                     flags = "a"
                 elif self.type != "force" and os.path.exists(self.name):
-                    raise IOError, "File %s already exists." % self.name
+                    raise IOError("File %s already exists." % self.name)
                 else:
                     flags = "w"
                 self.file = open(self.name, flags)
@@ -1289,7 +1289,7 @@ def sendTelegram(cmd, msg):
     bursted out.  The advantage of bursting telegrams, is that it makes the
     transmission extremely fast.
     """
-    msg = string.split(string.rstrip(msg), '\n')
+    msg = msg.rstrip().split('\n')
     if not msg:
         return
     tot = 0
@@ -1352,7 +1352,7 @@ class CmdRemove(baseCommand):
                     mm.group('sectors'),
                     mm.group('selectors')),
                 db)
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
         else:
             for unit in list:
@@ -1370,7 +1370,7 @@ class CmdDanno(baseCommand):
         printTime = empDb.megaDB['time'].printTime
         getName = empDb.megaDB['countries'].getName
         for m in empDb.megaDB['announcements']['list']:
-            if type(m[0]) == types.TupleType:
+            if type(m[0]) == tuple:
                 hdr = "> %s%s  dated %s" % (
                     m[0][0], (m[0][1] is not None
                               and " from %s"%getName(m[0][1]) or ""),
@@ -1392,7 +1392,7 @@ class CmdDtele(baseCommand):
         printTime = empDb.megaDB['time'].printTime
         getName = empDb.megaDB['countries'].getName
         for m in empDb.megaDB['telegrams']['list']:
-            if type(m[0]) == types.TupleType:
+            if type(m[0]) == tuple:
                 hdr = "> %s%s  dated %s" % (
                     m[0][0], (m[0][1] is not None
                               and " from %s"%getName(m[0][1]) or ""),
@@ -1425,7 +1425,7 @@ class CmdProjection(baseCommand):
             db = db = empDb.megaDB[typ[0]]
             needed_com = {}
 
-            lst = db.keys()
+            lst = list(db.keys())
             lst.sort()
             for id in lst:
                 unit = db[id]
@@ -1454,11 +1454,11 @@ class CmdProjection(baseCommand):
                 if sect['des'] != typ[2]:
                     continue
                 for c in typ[3]:
-                    if not needed_com.has_key(coord):
+                    if coord not in needed_com:
                         needed_com[coord] = {}
-                    if not needed_com[coord].has_key(c):
+                    if c not in needed_com[coord]:
                         needed_com[coord][c] = 0.
-                    if empDb.megaDB[typ[1]].has_key(unit['type']):
+                    if unit['type'] in empDb.megaDB[typ[1]]:
                         needed = empDb.megaDB[typ[1]][unit['type']][c]
                     else:
                         needed = 0
@@ -1469,7 +1469,7 @@ class CmdProjection(baseCommand):
                     needed_com[coord][c] = needed_com[coord][c] + \
                                            (100.0 - e) * needed / 100.0
 
-            for s in needed_com.keys():
+            for s in list(needed_com.keys()):
                 ok = 1
                 for c in typ[3]:
                     stock = 0
@@ -1541,7 +1541,7 @@ class CmdDmove(baseCommand):
                     sectors2, selectors2)),
                 "(xloc+0,yloc+0), __db[1], int(("+commodity[0]+"_dist)-"+commodity+")",
                 'SECTOR')
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
             return
 
@@ -1553,7 +1553,7 @@ class CmdDmove(baseCommand):
         sdict = {}
         for coord, db, amount, mobility in slist:
             if (amount > 0 and mobility > 0
-                and not ddict.has_key(coord)
+                and coord not in ddict
                 and empSector.is_movable_from(db, commodity)):
                 sdict[coord] = (amount, mobility,
                                 empSector.move_weight(db, commodity))
@@ -1569,7 +1569,7 @@ class CmdDmove(baseCommand):
                 comm, path.start[0], path.start[1], amount,
                 path.end[0], path.end[1]),
                       self.out, 1)
-            mmove.next()
+            next(mmove)
 
 class CmdSetFood(baseCommand):
     description = "Set food thresholds for maximum population growth"""
@@ -1593,7 +1593,7 @@ class CmdSetFood(baseCommand):
                 mm.group('sectors'),
                 mm.group('selectors')),
                 'SECTOR')
-        except empEval.error, e:
+        except empEval.error as e:
             viewer.Error(e)
             return
 

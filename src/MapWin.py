@@ -16,7 +16,7 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import string
 import operator
 import math
@@ -40,13 +40,13 @@ class mapSubWin:
         self.cursor = self.start = ()
         self.dimen = []
 
-        scrollX = Tkinter.Scrollbar(master, name="scrollX",
+        scrollX = tkinter.Scrollbar(master, name="scrollX",
                                     orient='horizontal')
         scrollX.grid(row=1, sticky='wes')
-        scrollY = Tkinter.Scrollbar(master, name="scrollY",
+        scrollY = tkinter.Scrollbar(master, name="scrollY",
                                     orient='vertical')
         scrollY.grid(column=1, row=0, sticky='nse')
-        self.Map = Tkinter.Canvas(master, name="sectors",
+        self.Map = tkinter.Canvas(master, name="sectors",
                                   xscrollcommand=scrollX.set,
                                   yscrollcommand=scrollY.set)
         self.Map.grid(column=0, row=0, sticky='nwes')
@@ -88,16 +88,16 @@ class mapSubWin:
 
         # getting Default Mapsize from "TkOption"
         try:
-            self.gridsize = map(float, string.split(
-                self.Map.option_get("defaultSize", "")))
+            self.gridsize = list(map(float, 
+                self.Map.option_get("defaultSize", "").split()))
             self.gridsize[1] = self.gridsize[1] * 3.0/2.0
         except (ValueError, IndexError):
             self.gridsize = [18.0, 24.0]
 
         # getting default for when to start the Combat Mode, when zooming
         try:
-            self.combatModeStartSize = map(float, string.split(
-                self.Map.option_get("combatModeStartSize", "")))
+            self.combatModeStartSize = list(map(float, 
+                self.Map.option_get("combatModeStartSize", "").split()))
             self.combatModeStartSize[1] = self.combatModeStartSize[1] * 3.0/2.0
         except (ValueError, IndexError):
             self.combatModeStartSize = [60.0, 80.0]
@@ -124,8 +124,8 @@ class mapSubWin:
 
     def adjustSector(self, ratio):
         """Scale the size of the map by RATIO."""
-        self.gridsize = map(operator.mul, [ratio]*len(self.gridsize),
-                            self.gridsize)
+        self.gridsize = list(map(operator.mul, [ratio]*len(self.gridsize),
+                            self.gridsize))
         # activating/deactivating combat mode
         if (self.gridsize[0]>self.combatModeStartSize[0] and
             self.gridsize[1]>self.combatModeStartSize[1]):
@@ -157,7 +157,7 @@ class mapSubWin:
             return
         xview = self.Map.xview()
         yview = self.Map.yview()
-        win = map(float, string.split(self.Map['scrollregion']))
+        win = list(map(float, self.Map['scrollregion'].split()))
         scrWidth, scrHeight = win[2]-win[0], win[3]-win[1]
         self.Map.xview('moveto', xview[0]
                        +(self.dimen[0]-new[0])/2.0/scrWidth)
@@ -172,7 +172,7 @@ class mapSubWin:
 
     def see(self, coord):
         """If COORD isn't currently viewable, scroll window so that it is."""
-        win = map(float, string.split(self.Map['scrollregion']))
+        win = list(map(float, self.Map['scrollregion'].split()))
         scrWidth, scrHeight = win[2]-win[0], win[3]-win[1]
         xview = self.Map.xview()
         yview = self.Map.yview()
@@ -209,7 +209,7 @@ class mapSubWin:
         self.origin = (-loc[0], -loc[1])
 
         # Redisplay sectors without forcing a redraw.
-        win = map(float, string.split(self.Map['scrollregion']))
+        win = list(map(float, self.Map['scrollregion'].split()))
         scrWidth, scrHeight = win[2], win[3]
         self.Map.addtag_enclosed('move_a',
                                  -99999, -99999,
@@ -220,8 +220,8 @@ class mapSubWin:
         # It is not possible to capture all the x coordinates by drawing a
         # vertical line.  (The x coordinate of every other row is
         # staggered.)  This loop catches these odd starting coordinates.
-        for i in (range(y, scrHeight+1, self.gridsize[1])+
-                  range(y, -1, -self.gridsize[1])):
+        for i in (list(range(y, scrHeight+1, self.gridsize[1]))+
+                  list(range(y, -1, -self.gridsize[1]))):
             self.Map.addtag_enclosed('move_b',
                                      x-self.gridsize[0],
                                      i-self.gridsize[1]*2/3,
@@ -248,7 +248,7 @@ class mapSubWin:
         megaDB = empDb.megaDB
         updateDB = empDb.updateDB
 
-        if total or updateDB['version'].has_key('worldsize'):
+        if total or 'worldsize' in updateDB['version']:
             ws = self.maxCoord = megaDB['version']['worldsize']
             self.Map['scrollregion'] = (-self.gridsize[0], -self.gridsize[1],
                                         ws[0]*self.gridsize[0],
@@ -271,7 +271,7 @@ class mapSubWin:
             self.Map.delete('SECTOR')
         else:
             db = updateDB['SECTOR']
-        for i, j in db.items():
+        for i, j in list(db.items()):
             des = j.get('des')
             if not des:
                 continue
@@ -336,7 +336,7 @@ class mapSubWin:
             self.Map.lift("origin")
 
         # Capital decoration
-        if total or updateDB['nation'].has_key('capital'):
+        if total or 'capital' in updateDB['nation']:
             coord = megaDB['nation']['capital']
             self.Map.delete("capital")
             if coord:
@@ -359,9 +359,9 @@ class mapSubWin:
 #	    print "Dealing with " + dbname +":",
             db = megaDB.get(dbname, {})
             self.Map.delete(tagName)
-            for i in db.getSec(('x', 'y')).values():
+            for i in list(db.getSec(('x', 'y')).values()):
                 nu={}
-                allUnits=i.values()
+                allUnits=list(i.values())
                 if allUnits:
                     x, y = self.getCoord((allUnits[0]['x'],
                                           allUnits[0]['y']))
@@ -377,7 +377,7 @@ class mapSubWin:
                         key=CN_ENEMY
 
                     if key:
-                        if nu.has_key(key):
+                        if key in nu:
                                 nu[key]=nu[key]+1
                         else: nu[key]=1
                         if self.combatmode:
@@ -387,10 +387,10 @@ class mapSubWin:
                     if not nu:
                         # No units here.
                         continue
-                if nu.has_key(CN_OWNED):
+                if CN_OWNED in nu:
                     self.drawItem(x, y, ownedInfo, "Unit",
                                   tags=tagName)
-                if nu.has_key(CN_ENEMY):
+                if CN_ENEMY in nu:
                     self.drawItem(x, y, enemyInfo, "EnemyUnit",
                                   tags=tagName)
 
@@ -412,8 +412,8 @@ class mapSubWin:
         coords = (nx,ny)
         # Convert the internal coords to screen locations
         l = len(coords)/2
-        coords = map(operator.add, (x, y)*l, map(
-            operator.mul, self.gridsize*l, coords))
+        coords = list(map(operator.add, (x, y)*l, list(map(
+            operator.mul, self.gridsize*l, coords))))
 
 #	print "*g*"
         self.Map.create_text(coords[0],coords[1], tags=tagName,
@@ -435,10 +435,10 @@ class mapSubWin:
             return
         # Convert the internal coords to screen locations
         coords = item[1]
-        l = len(coords)/2
-        coords = map(operator.add, (x, y)*l, map(
+        l = len(coords)//2
+        coords = list(map(operator.add, (x, y)*l, list(map(
             operator.mul, (self.gridsize[0], self.gridsize[1]*2.0/3.0)*l,
-            coords))
+            coords))))
 
 
         # QUICK FIX FOR UBUNTU 15.10
@@ -451,15 +451,15 @@ class mapSubWin:
         dict.update(item[2])
         dict.update(kw)
         # Draw it
-        return apply(item[0], tuple(coords), dict)
+        return item[0](*tuple(coords), **dict)
 
     def drawPath(self, *coords, **kw):
         """Draw the bestpath between a set of sectors."""
         if coords:
             opts = {'tags':'path', 'smooth':1, 'arrow':'last', 'width':3}
             opts.update(kw)
-            coords = map(self.getCoord, coords)
-            apply(self.Map.create_line, tuple(coords), opts)
+            coords = list(map(self.getCoord, coords))
+            self.Map.create_line(*tuple(coords), **opts)
         else:
             self.Map.delete('path')
 
@@ -490,7 +490,7 @@ class mapSubWin:
         else:
             box = [x, x, y, y]
 
-        odd_origin = self.origin[0] ^ self.origin[1]
+        odd_origin = int(self.origin[0]) ^ int(self.origin[1])
         floor = math.floor
 
         # Fix bogus ranges
@@ -506,7 +506,7 @@ class mapSubWin:
             box[2] = box[2]+((int(floor(box[2]))&1)^odd_col)
             box[3] = box[3]-((int(floor(box[3]))&1)^odd_col)
 
-        box = map(int, map(floor, box))
+        box = list(map(int, list(map(floor, box))))
 
         # Compensate for the origin
         for box_pos, coord in [[0, 0], [1, 0], [2, 1], [3, 1]]:
@@ -617,7 +617,7 @@ class CmdMap(empCmd.baseCommand):
     defaultBinding = (('Map', 3),)
 
     def invoke(self):
-        self.Root = root = Tkinter.Toplevel(class_="Map")
+        self.Root = root = tkinter.Toplevel(class_="Map")
         root.title("Empire map")
         root.iconname("Empire map")
 
@@ -647,7 +647,7 @@ class CmdBestpath(empCmd.baseCommand):
             coords = ()
         else:
             try:
-                coords = map(empParse.str2Coords, string.split(args))
+                coords = list(map(empParse.str2Coords, args.split()))
             except ValueError:
                 viewer.Error("Bad coords.")
             pos = []
@@ -663,7 +663,7 @@ class CmdBestpath(empCmd.baseCommand):
                     pos.append(start)
             coords = pos
 
-        apply(viewer.map.drawPath, tuple(coords))
+        viewer.map.drawPath(*tuple(coords))
 
 ###########################################################################
 ############################# Map major modes #############################
@@ -679,26 +679,26 @@ class MoveMode:
             return
 
         # Set up the display area.
-        self.Area = Tkinter.Frame(mapClass.Map.master, name="modeInfo")
+        self.Area = tkinter.Frame(mapClass.Map.master, name="modeInfo")
         self.Area.grid(row=2, sticky="swe")
-        self.lblVar = Tkinter.StringVar()
-        label = Tkinter.Label(self.Area, name="label", anchor='w',
+        self.lblVar = tkinter.StringVar()
+        label = tkinter.Label(self.Area, name="label", anchor='w',
                               justify='left', textvariable=self.lblVar)
         label.pack(anchor='w')
-        self.Quantity = Tkinter.StringVar()
+        self.Quantity = tkinter.StringVar()
         self.Quantity.trace_variable("w",
                                      (lambda var, o, mode, self=self:
                                       self.redraw()))
-        entry = Tkinter.Entry(self.Area, name="quantity",
+        entry = tkinter.Entry(self.Area, name="quantity",
                               textvariable=self.Quantity)
         entry.pack(anchor='w')
         entry.bind('<Key-Return>', self.DoOk)
         entry.bind('<Key-Escape>', self.finish)
         entry.focus()
-        self.okB = Tkinter.Button(self.Area, name="ok", text="Ok",
+        self.okB = tkinter.Button(self.Area, name="ok", text="Ok",
                                   command=self.DoOk)
         self.okB.pack(side='left', expand=1, fill='x')
-        self.cancelB = Tkinter.Button(self.Area, name="cancel", text="Cancel",
+        self.cancelB = tkinter.Button(self.Area, name="cancel", text="Cancel",
                                       command=self.finish)
         self.cancelB.pack(side='right', expand=1, fill='x')
 
@@ -818,7 +818,7 @@ class MoveMode:
             self.redraw()
 
     def redraw(self, total=1):
-        if not total and not empDb.updateDB.has_key('SECTOR'):
+        if not total and 'SECTOR' not in empDb.updateDB:
             # Nothing changed.
             return
 
@@ -887,7 +887,7 @@ class MoveMode:
             msg = msg + "%d,%d=>%s    " % (last[0], last[1], newmob)
 
             # Draw path
-            apply(self.map.drawPath, tuple(newPathList[-1]), {"fill":color})
+            self.map.drawPath(*tuple(newPathList[-1]), **{"fill":color})
 
         if reverse:
             newPathList.reverse()

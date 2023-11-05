@@ -102,15 +102,15 @@ class Curses:
 
     def login_error(self, msg):
         """empQueue/login handler: Report a login error."""
-        print msg
+        print(msg)
         # HACK! See if we are online..
         if self.ioq.sock.flags >= empQueue.QU_DISCONNECT:
             ldb = empDb.megaDB['login']
-            t = raw_input("host[%s]: " % ldb['host'])
+            t = input("host[%s]: " % ldb['host'])
             if t:
                 ldb['host'] = t
             while 1:
-                t = raw_input("port[%s]: " % ldb['port'])
+                t = input("port[%s]: " % ldb['port'])
                 if t:
                     try: t = int(t)
                     except ValueError:
@@ -119,17 +119,17 @@ class Curses:
                 break
         # Hack! Check if we need to kill
         if msg[:22] == "[3] country in use by ":
-            t = raw_input("Try to issue a kill? [n] ")
+            t = input("Try to issue a kill? [n] ")
             if t[:1] == 'y' or t[:1] == 'Y':
                 self.login_kill = 1
                 self.loginHandler.retry()
                 return
             self.login_kill = 0
         ldb = empDb.megaDB['login']
-        t = raw_input("Country? [%s] " % ldb['coun'])
+        t = input("Country? [%s] " % ldb['coun'])
         if t:
             ldb['coun'] = t
-        t = raw_input("Representative? [%s] " % ldb['repr'])
+        t = input("Representative? [%s] " % ldb['repr'])
         if t:
             ldb['repr'] = t
         self.loginHandler.retry()

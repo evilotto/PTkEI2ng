@@ -182,7 +182,7 @@ class EmpIOQueue:
     used mainly as a code/data container.
     """
 
-    def __init__(self, async, login):
+    def __init__(self, async_p, login):
         global empQueue
         empQueue = self
 
@@ -208,7 +208,7 @@ class EmpIOQueue:
         # waiting on the queue.  loginParser (which is associated with the
         # class LoginHandler) is used when the queue needs to reestablish a
         # server connection.
-        self.defParser = async
+        self.defParser = async_p
         self.loginParser = login
 
         self.flags = QU_OFFLINE
@@ -216,31 +216,31 @@ class EmpIOQueue:
     def SendNow(self, cmd):
         """Immediately send CMD to socket."""
         # Paranoia check
-        if string.find(cmd, "\n") != -1:
+        if cmd.find("\n") != -1:
             # Ugh, there should be no newlines in the cmd
-            viewer.Error("Send error - embedded newline: " + `cmd`)
-            cmd = cmd[:string.find(cmd, "\n")]
+            viewer.Error("Send error - embedded newline: " + repr(cmd))
+            cmd = cmd[:cmd.find("\n")]
 ##  	self.debug(cmd, 'send')
         try:
-            self.socket.send(cmd+"\n")
-        except socket.error, e:
+            self.socket.send((cmd+"\n").encode())
+        except socket.error as e:
             self.loginParser.Disconnect()
             viewer.Error("Socket write error: " + str(e))
-        except UnicodeError, e:
-	    viewer.Error("Socket write error: " + str(e))
+        except UnicodeError as e:
+            viewer.Error("Socket write error: " + str(e))
             self.socket.send("\n")
     def debug(*args):
         pass
     # To enable debugging, rename this function to debug.
     def debugXX(self, msg, type=None):
         if type == 'send':
-            print "## %s" % msg
+            print("## %s" % msg)
         elif type == 'get':
-            print "-- %s" % msg
+            print("-- %s" % msg)
         else:
-            print "%-30s @ len:%-2d wait:%-2d sent:%-2d flags:%-2d" % (
+            print("%-30s @ len:%-2d wait:%-2d sent:%-2d flags:%-2d" % (
                 msg, len(self.FuncList), self.FLWaitLev,
-                self.FLSentLev, self.flags)
+                self.FLSentLev, self.flags))
 
     def doFlags(self):
         """Set the queue flags depending on the current state of the queue."""
@@ -394,7 +394,7 @@ class EmpIOQueue:
         __C_PROMPT = C_PROMPT; __QU_SYNC = QU_SYNC
         __QU_FULLSYNC = QU_FULLSYNC; __QU_DISCONNECT = QU_DISCONNECT
         __len = len; __None = None; select__select = select.select
-        string__count = string.count; string__split = string.split
+        string__count = str.count; string__split = str.split
         self__InpBuf = self.InpBuf; self__FuncList = self.FuncList
         self__sendCommand = self.sendCommand; self__socket = self.socket
         self__socket__recv = self.socket.recv
@@ -438,8 +438,8 @@ class EmpIOQueue:
                     raise StopRead(StopReading)
                 # Socket is Ok to read - now read a large block.
                 try:
-                    tmp = self__socket__recv(4096)
-                except socket.error, e:
+                    tmp = self__socket__recv(4096).decode()
+                except socket.error as e:
                     error = "Socket read exception: " + str(e)
                     self.loginParser.Disconnect()
                     raise StopRead
@@ -450,7 +450,7 @@ class EmpIOQueue:
                     raise StopRead
                 # If a prompt is encountered anywhere in the buffered data,
                 # send the next command immediately in QU_SYNC mode.
-                cnt = string__count(tmp, "\n"+__C_PROMPT)
+                cnt = tmp.count("\n"+__C_PROMPT)
                 if not self__InpBuf and tmp[:1] == __C_PROMPT:
                     cnt = cnt + 1
                 self.FLWaitLev = self.FLWaitLev + cnt
@@ -482,8 +482,10 @@ class EmpIOQueue:
                     except: flashException()
                     continue
                 # call the handler
-                try: self__FuncList[0].line(data)
-                except: flashException()
+                try:
+                    self__FuncList[0].line(data)
+                except:
+                    flashException()
                 # Check for prompt
                 if data[:1] == __C_PROMPT:
                     del self__FuncList[0]
@@ -617,8 +619,8 @@ class LoginHandler:
             # address is being looked up.
             empQueue.socket.setblocking(0)
             empQueue.socket.connect((ldb['host'], ldb['port']))
-        except socket.error, e:
-            if e[0] not in (errno.EINPROGRESS, errno.EWOULDBLOCK):
+        except socket.error as e:
+            if e.errno not in (errno.EINPROGRESS, errno.EWOULDBLOCK):
                 self.callback.login_error("Connect error: " + str(e))
                 return
         self.pos = 0
@@ -804,7 +806,7 @@ class NormalHandler:
     def start(self):
         """EmpIOQueue Handler: Previous command completed; start this one."""
         # Check for lowlevel parsers
-        lst = string.split(self.command)
+        lst = self.command.split()
         if lst:
             cmd = lst[0]
         else:
@@ -844,7 +846,7 @@ class NormalHandler:
                 viewer.flash(i)
             del self.msgqueue[:]
             ndb = empDb.megaDB['prompt']
-            ndb['minutes'], ndb['BTU'] = map(int, string.split(msg))
+            ndb['minutes'], ndb['BTU'] = list(map(int, msg.split()))
             self.out.End(self.command)
 ##	elif msg[0] == C_REDIR:
 ##	    print "PE: Server Redirect requested:", msg[2:]

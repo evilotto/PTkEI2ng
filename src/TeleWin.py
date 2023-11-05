@@ -20,7 +20,7 @@ import re
 import string
 import types
 
-import Tkinter
+import tkinter
 import Pmw
 
 import Tk_List
@@ -37,7 +37,7 @@ class teleWin:
     def __init__(self):
         title = "Empire Correspondence"
         # Create root window
-        self.Root = Tkinter.Toplevel(name="telegram")
+        self.Root = tkinter.Toplevel(name="telegram")
         self.Root.withdraw()
         self.Root.title(title)
         self.Root.iconname(title)
@@ -46,85 +46,85 @@ class teleWin:
         viewer.transferKeys(self.Root)
 
         # TCL variables
-        self.type = Tkinter.StringVar()
+        self.type = tkinter.StringVar()
         self.type.set('telegrams')
 
         # Create options bar
-        oframe = Tkinter.Frame(self.Root, name="oframe")
+        oframe = tkinter.Frame(self.Root, name="oframe")
         oframe.pack(side='bottom', fill='x', expand=1)
-        orframe = Tkinter.Frame(oframe, name="orframe")
+        orframe = tkinter.Frame(oframe, name="orframe")
         orframe.pack(side='left', fill='y', expand=1)
-        self.AnnoB = Tkinter.Radiobutton(
+        self.AnnoB = tkinter.Radiobutton(
             orframe, name="anno", text="Announcements",
             anchor='w', variable=self.type,
             value='announcements',
             command=self.redraw)
         self.AnnoB.pack(fill='both', expand=1)
-        self.TeleB = Tkinter.Radiobutton(
+        self.TeleB = tkinter.Radiobutton(
             orframe, name="tele", text="Telegrams",
             anchor='w',
             variable=self.type, value='telegrams',
             command=self.redraw)
         self.TeleB.pack(fill='both', expand=1)
-        self.SendB = Tkinter.Button(
+        self.SendB = tkinter.Button(
             oframe, name="send",
             text="Send", command=self.DoSend)
         self.SendB.pack(side='left', fill='y', expand=1)
-        self.AbortB = Tkinter.Button(
+        self.AbortB = tkinter.Button(
             oframe, name="abort",
             text="Abort", command=self.DoAbort,
             state='disabled')
         self.AbortB.pack(side='left', fill='y', expand=1)
-        self.ReplyB = Tkinter.Button(
+        self.ReplyB = tkinter.Button(
             oframe, name="reply",
             text="Reply", command=self.DoReply)
         self.ReplyB.pack(side='left', fill='y', expand=1)
-        self.RemoveB = Tkinter.Button(
+        self.RemoveB = tkinter.Button(
             oframe, name="delete",
             text="Delete", command=self.DoRemove)
         self.RemoveB.pack(side='left', fill='y', expand=1)
 
         # Create search box
-        self.SearchMsg = Tkinter.StringVar()
-        self.StringRE = Tkinter.StringVar()
-        self.TypeRE = Tkinter.IntVar()
+        self.SearchMsg = tkinter.StringVar()
+        self.StringRE = tkinter.StringVar()
+        self.TypeRE = tkinter.IntVar()
         self.TypeRE.set(0)
-        sframe = Tkinter.Frame(self.Root, name="sframe")
+        sframe = tkinter.Frame(self.Root, name="sframe")
         sframe.pack(side='top', fill='both', expand=1)
-        srframe = Tkinter.Frame(sframe, name="srframe")
+        srframe = tkinter.Frame(sframe, name="srframe")
         srframe.pack(side='right')
-        hsearch = Tkinter.Radiobutton(srframe, name="headerSearch",
+        hsearch = tkinter.Radiobutton(srframe, name="headerSearch",
                                       text="Header Search", anchor='w',
                                       variable=self.TypeRE, value=0)
         hsearch.pack(fill='both', expand=1)
         viewer.Balloon.bind(hsearch, "Search only the first\n"
                             +"line of text")
-        fsearch = Tkinter.Radiobutton(srframe, name="fullSearch",
+        fsearch = tkinter.Radiobutton(srframe, name="fullSearch",
                                       text="Full Search", anchor='w',
                                       variable=self.TypeRE, value=1)
         fsearch.pack(fill='both', expand=1)
         viewer.Balloon.bind(fsearch, "Search the entire message")
-        listall = Tkinter.Button(sframe, name="listAll",
+        listall = tkinter.Button(sframe, name="listAll",
                                  command=self.DoListAll, text="List All")
         listall.pack(side='right')
         viewer.Balloon.bind(listall, "Undo a previous search")
-        search = Tkinter.Button(sframe, name="search",
+        search = tkinter.Button(sframe, name="search",
                                 command=self.DoSearch, text="Search")
         search.pack(side='right')
         viewer.Balloon.bind(search, "Search for string")
-        Tkinter.Label(sframe, name="slabel",
+        tkinter.Label(sframe, name="slabel",
                       textvariable=self.SearchMsg,
                       anchor='sw'
                       ).pack(side='top', fill='x', expand=1)
-        searchRE = Tkinter.Entry(sframe, name="regexp",
+        searchRE = tkinter.Entry(sframe, name="regexp",
                                  textvariable=self.StringRE)
         searchRE.pack(side='top', fill='x', expand=1)
         viewer.Balloon.bind(searchRE, "Click to enter a search string")
 
         # Create list box
-        lframe = Tkinter.Frame(self.Root, name="lframe")
+        lframe = tkinter.Frame(self.Root, name="lframe")
         lframe.pack(side='top', fill='both', expand=1)
-        scrollY = Tkinter.Scrollbar(lframe, name="scrollY")
+        scrollY = tkinter.Scrollbar(lframe, name="scrollY")
         scrollY.pack(side='right', fill='y')
         self.List = Tk_List.MyListbox(lframe, name="list",
                                       height=8, selectmode='extended',
@@ -134,7 +134,7 @@ class teleWin:
         scrollY['command'] = self.List.yview
 
         # Create text box and scrollbar
-        scrollY = Tkinter.Scrollbar(self.Root, name="scrollY")
+        scrollY = tkinter.Scrollbar(self.Root, name="scrollY")
         scrollY.pack(side='right', anchor='e', fill='y')
         self.Text = MyText.MyText(self.Root, name="text",
                                   yscrollcommand=scrollY.set)
@@ -177,7 +177,7 @@ class teleWin:
         printTime = empDb.megaDB['time'].printTime
         getName = empDb.megaDB['countries'].getName
         for i in msg:
-            if type(i[0]) == types.TupleType:
+            if type(i[0]) == tuple:
                 hdr = "> %s%s  dated %s\n" % (
                     i[0][0],
                     (i[0][1] is not None
@@ -204,7 +204,7 @@ class teleWin:
         fullSearch = self.TypeRE.get()
         for i in db:
             hdr = i[0]
-            if type(hdr) == types.TupleType:
+            if type(hdr) == tuple:
                 hdr = "> %-40s %s" % (
                     (hdr[1] is not None
                      and "%s from %s"%(hdr[0], getName(hdr[1]))
@@ -222,7 +222,7 @@ class teleWin:
                     continue
             self.List.insert(0, (hdr, i))
         if total:
-            apply(self.List.setStatus, sts)
+            self.List.setStatus(*sts)
 ## 	else:
 ## 	    self.List.see('end')
 
@@ -230,7 +230,7 @@ class teleWin:
         """Tk callback: Process Search button request."""
         try:
             self.compRE = re.compile(self.StringRE.get())
-        except re.error, e:
+        except re.error as e:
             self.SearchMsg.set("Regular Expression Error: %s" % e[0])
             self.Root.bell()
         else:
@@ -307,7 +307,7 @@ class teleWin:
         if self.type.get() == 'announcements':
             self.sendCmd = "anno"
         else:
-            if (not type(which[0][0]) == types.TupleType
+            if (not type(which[0][0]) == tuple
                 or which[0][0][1] is None):
                 self.Root.bell()
                 return

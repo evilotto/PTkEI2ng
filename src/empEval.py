@@ -113,15 +113,15 @@ class delayedBinding:
     def __init__(self, name):
         self.name = name
     def __call__(self, *args, **kw):
-        return apply(self.convertField(), args, kw)
+        return self.convertField()(*args, **kw)
     def convertField(self):
         try:
             if callable(self.name):
                 val = self.name(self.delayedValue)
             else:
                 val = self.delayedValue[self.name]
-        except KeyError, e:
-            raise NameError, e
+        except KeyError as e:
+            raise NameError(e)
 ##  	try:
 ##  	    val = empDb.fixedAtoI(val)
 ##  	except ValueError:
@@ -317,7 +317,7 @@ def selectToExpr(dbname, range, cond):
     """
     mc = sectorsFormat.match(range)
     if not mc:
-        raise error, "Coordinate regexp failure."
+        raise error("Coordinate regexp failure.")
 
     if mc.group('realm') is not None:
         # Realm
@@ -327,18 +327,18 @@ def selectToExpr(dbname, range, cond):
             rm = int(mc.group('realm'))
         try: val = empDb.megaDB['realm'][rm]
         except KeyError:
-            raise error, "Realm not in database."
+            raise error("Realm not in database.")
         minX, maxX, minY, maxY = val
         if minX < maxX: 
-            conditions = map(operator.add, ("xl>=", "xl<="),
-                             map(str, (minX, maxX)))
+            conditions = list(map(operator.add, ("xl>=", "xl<="),
+                             list(map(str, (minX, maxX)))))
         elif minX > maxX:
             conditions = ["(xl >= %d or xl <= %d)" % (minX, maxX)]
         else:
             conditions = ["xl==%d" % (minX)]
         if minY < maxY: 
-            conditions = conditions + map(operator.add, ("yl>=", "yl<="),
-                                          map(str, (minY, maxY)))
+            conditions = conditions + list(map(operator.add, ("yl>=", "yl<="),
+                                          list(map(str, (minY, maxY)))))
         elif minY > maxY:
             conditions.append("(yl >= %d or yl <= %d)" % (minY, maxY))
         else:
@@ -346,19 +346,19 @@ def selectToExpr(dbname, range, cond):
     elif mc.group('minX'):
         # Range
         if mc.group('maxX'):
-            minX, maxX = map(int, mc.group('minX', 'maxX'))
+            minX, maxX = list(map(int, mc.group('minX', 'maxX')))
             if minX < maxX: 
-                conditions = map(operator.add, ("xl>=", "xl<="),
-                                 mc.group('minX', 'maxX'))
+                conditions = list(map(operator.add, ("xl>=", "xl<="),
+                                 mc.group('minX', 'maxX')))
             elif minX > maxX:
                 conditions = ["(xl >= %s or xl <= %s)" % mc.group('minX', 'maxX')]
         else:
             conditions = ["xl==" + mc.group('minX')]
         if mc.group('maxY'):
-            minY, maxY = map(int, mc.group('minY', 'maxY'))
+            minY, maxY = list(map(int, mc.group('minY', 'maxY')))
             if minY < maxY: 
-                conditions = conditions + map(operator.add, ("yl>=", "yl<="),
-                                 mc.group('minY', 'maxY'))
+                conditions = conditions + list(map(operator.add, ("yl>=", "yl<="),
+                                 mc.group('minY', 'maxY')))
             elif minY > maxY:
                 conditions.append("(yl >= %s or yl <= %s)" % mc.group('minY', 'maxY'))
         else:
@@ -374,13 +374,13 @@ def selectToExpr(dbname, range, cond):
     while cond:
         mc = conditionsFormat.match(cond)
         if not mc:
-            raise error, "Condition regexp failure."
+            raise error("Condition regexp failure.")
         # Convert the two variables
         vars = []
         for i in mc.group('var', 'val'):
             if len(i) == 1 and not i in string.digits:
                 vars.append(repr(i))
-            elif re.compile("^[a-z][a-z0-9_]+$").match(i) and not selectors[dbname].has_key(i):
+            elif re.compile("^[a-z][a-z0-9_]+$").match(i) and i not in selectors[dbname]:
                 vars.append(repr(i))
             else:
                 vars.append(i)
@@ -392,7 +392,7 @@ def selectToExpr(dbname, range, cond):
 
     if not conditions:
         return "1"
-    return string.join(conditions, " and ")
+    return " and ".join(conditions)
 
 ss_normal = "[^\]\"']"
 ss_quoted1 = "'.*?'"
@@ -411,9 +411,9 @@ def estrToExpr(txt):
     while txt:
         mc = exprFormat.match(txt)
         if not mc:
-            cmd = cmd + "+"+`txt`
+            cmd = cmd + "+"+repr(txt)
             break
-        cmd = cmd + "+"+`mc.group('pre')`
+        cmd = cmd + "+"+repr(mc.group('pre'))
         e = mc.group('eval')
         txt = mc.group('post')
         cmd = cmd + "+str(("+e+"))"
@@ -429,7 +429,7 @@ def evalString(expr, dbname, db):
     try:
         return eval(expr, envio)
     except:
-        raise error, (
+        raise error(
             'Evaluate error!\n"%s" raised %s with detail:\n"%s".'
             % ((expr,)+tuple(sys.exc_info()[:2])))
 
@@ -470,7 +470,7 @@ def getSectors(expr, dbname):
             dbname,
             "   if ("+expr+"): __list.append(__db[0])\n")
     except:
-        raise error, (
+        raise error(
             'GetSectors error in "%s"!\nException %s with detail:\n"%s".'
             % ((expr,) + tuple(sys.exc_info()[:2])))
 
@@ -486,12 +486,12 @@ def getSectorDBs(expr, dbname):
             dbname,
             "   if (%s): __list.append(__db)\n" % expr)
     except:
-        raise error, (
+        raise error(
             'GetSectorDBs error in "%s"!\nException %s with detail:\n"%s".'
             % ((expr,) + tuple(sys.exc_info()[:2])))
     dict = {}
-    map(apply, [operator.setitem]*len(list),
-        map(operator.add, ((dict,),)*len(list), list))
+    list(map(apply, [operator.setitem]*len(list),
+        list(map(operator.add, ((dict,),)*len(list), list))))
     return dict
 
 ##  def getMMoveInfo(commodity, sourceSelect, sourceLevel, sourceMob,
@@ -532,6 +532,6 @@ def foreach(cond_expr, txt_expr, dbname):
             dbname,
             "   if ("+cond_expr+"): __list.append(("+txt_expr+"))\n")
     except:
-        raise error, (
+        raise error(
             'Foreach error in "%s"/"%s"!\nException %s with detail:\n"%s".'
             % ((cond_expr, txt_expr) + tuple(sys.exc_info()[:2])))

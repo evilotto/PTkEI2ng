@@ -16,10 +16,10 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import Tkinter
+import tkinter
 import Pmw
-import tkMessageBox
-import tkFileDialog
+import tkinter.messagebox
+import tkinter.filedialog
 
 import string
 import sys
@@ -36,7 +36,7 @@ class loginWin:
     """Get host/port and coun/rep info in a graphical manner."""
     def __init__(self):
         # Create root window
-        self.Root = Tkinter.Toplevel(name="login")
+        self.Root = tkinter.Toplevel(name="login")
         self.Root.withdraw()
         # Windows HACK!
         if os.name == 'nt':
@@ -46,7 +46,7 @@ class loginWin:
         self.Root.bind('<Return>', self.DoPlay)
         self.Root.protocol('WM_DELETE_WINDOW', self.handleDelete)
 
-        self.Status = Tkinter.Label(self.Root, name="status", width=40,
+        self.Status = tkinter.Label(self.Root, name="status", width=40,
                                     anchor='w', text="hrmm")
         self.Status.pack(side='bottom', fill='x', expand=1)
 
@@ -55,20 +55,20 @@ class loginWin:
                             tag_text = "Database File")
         dbGroup.pack(fill='x', expand=1)
         dbframe = dbGroup.interior()
-        self.FileInfo = Tkinter.Label(dbframe, name="filename",
+        self.FileInfo = tkinter.Label(dbframe, name="filename",
                                       text="File:\n "+empDb.DBIO.filename,
                                       justify='left', anchor='w')
         self.FileInfo.pack(side='top', fill='x', expand=1)
-        self.ResetB = Tkinter.Button(dbframe, name="reset",
+        self.ResetB = tkinter.Button(dbframe, name="reset",
                                      text="Reset", command=self.DoReset)
         self.ResetB.pack(side='right')
-        self.SaveB = Tkinter.Button(dbframe, name="save",
+        self.SaveB = tkinter.Button(dbframe, name="save",
                                       text="Save As", command=self.DoSave)
         self.SaveB.pack(side='right')
-        self.LoadB = Tkinter.Button(dbframe, name="load",
+        self.LoadB = tkinter.Button(dbframe, name="load",
                                       text="Load", command=self.DoLoad)
         self.LoadB.pack(side='right')
-        self.NewB = Tkinter.Button(dbframe, name="new",
+        self.NewB = tkinter.Button(dbframe, name="new",
                                    text="New", command=self.DoNew)
         self.NewB.pack(side='right')
 
@@ -82,17 +82,17 @@ class loginWin:
 ##  			     tag_items=("Cheetah", "Zebra", "Changeling"))
         netGroup.pack(side='top', fill='x', expand=1)
         netFrame = netGroup.interior()
-        lhost = Tkinter.Label(netFrame, name="lhost",
+        lhost = tkinter.Label(netFrame, name="lhost",
                               anchor='w', text="Host:")
         lhost.pack(fill='x', expand=1)
-        self.Host = Tkinter.Entry(netFrame, name="host")
+        self.Host = tkinter.Entry(netFrame, name="host")
         self.Host.pack(fill='x', expand=1)
-        lport = Tkinter.Label(netFrame, name="lport",
+        lport = tkinter.Label(netFrame, name="lport",
                               anchor='w', text="Port:")
         lport.pack(fill='x', expand=1)
-        self.Port = Tkinter.Entry(netFrame, name="port")
+        self.Port = tkinter.Entry(netFrame, name="port")
         self.Port.pack(fill='x', expand=1)
-        self.DisconnectB = Tkinter.Button(netFrame, name="disconnect",
+        self.DisconnectB = tkinter.Button(netFrame, name="disconnect",
                                           text="Disconnect", state='disabled',
                                           command=self.DoDisconnect)
         self.DisconnectB.pack(anchor='e')
@@ -102,22 +102,22 @@ class loginWin:
                                 tag_text = "Player Information")
         playerGroup.pack(side='top', fill='x', expand=1)
         pframe = playerGroup.interior()
-        lcoun = Tkinter.Label(pframe, name="lcoun",
+        lcoun = tkinter.Label(pframe, name="lcoun",
                               anchor='w', text="Country:")
         lcoun.pack(fill='x', expand=1)
-        self.Coun = Tkinter.Entry(pframe, name="coun")
+        self.Coun = tkinter.Entry(pframe, name="coun")
         self.Coun.pack(fill='x', expand=1)
-        lrep = Tkinter.Label(pframe, name="lrep",
+        lrep = tkinter.Label(pframe, name="lrep",
                              anchor='w', text="Password:")
         lrep.pack(fill='x', expand=1)
-        self.Rep = Tkinter.Entry(pframe, name="rep")
+        self.Rep = tkinter.Entry(pframe, name="rep")
         self.Rep.pack(fill='x', expand=1)
-        self.killV = Tkinter.StringVar()
-        killCB = Tkinter.Checkbutton(pframe, name="kill", text="Kill",
+        self.killV = tkinter.StringVar()
+        killCB = tkinter.Checkbutton(pframe, name="kill", text="Kill",
                                      variable=self.killV,
                                      command=self.DoKill)
         killCB.pack(anchor='w')
-        self.PlayB = Tkinter.Button(pframe, name="play",
+        self.PlayB = tkinter.Button(pframe, name="play",
                                     text="Play", command=self.DoPlay)
         self.PlayB.pack(anchor='e')
 
@@ -160,7 +160,7 @@ class loginWin:
 
     def DoReset(self):
         """Tk callback: Process Reset button request."""
-        if not tkMessageBox.askokcancel(
+        if not tkinter.messagebox.askokcancel(
             "Reset Database?",
             "This command will reset all known information."
             "  Really continue?"):
@@ -175,7 +175,7 @@ class loginWin:
     def DoSave(self):
         """Tk callback: Process Save button request."""
         DBIO = empDb.DBIO
-        newfile = tkFileDialog.SaveAs(title="Save Database",
+        newfile = tkinter.filedialog.SaveAs(title="Save Database",
                                       initialfile=DBIO.filename).show()
         if not newfile:
             return
@@ -190,7 +190,7 @@ class loginWin:
 
     def DoLoad(self):
         """Tk callback: Process Load button request."""
-        newfile = tkFileDialog.Open(title="Load Database").show()
+        newfile = tkinter.filedialog.Open(title="Load Database").show()
         if not newfile:
             return
         DBIO = empDb.DBIO
@@ -215,7 +215,7 @@ class loginWin:
 
     def DoNew(self):
         """Tk callback: Process New button request."""
-        newfile = tkFileDialog.SaveAs(title="New Database").show()
+        newfile = tkinter.filedialog.SaveAs(title="New Database").show()
         if not newfile:
             return
         DBIO = empDb.DBIO
@@ -290,39 +290,39 @@ class CmdLogin(empCmd.baseCommand):
 class QueueStatus:
     def __init__(self, root):
         # Create the queue status menubutton
-        self.queueStatus = Tkinter.StringVar()
+        self.queueStatus = tkinter.StringVar()
         self.queueStatus.set("Starting")
-        menubutton = Tkinter.Menubutton(viewer.Root, name="socket",
+        menubutton = tkinter.Menubutton(viewer.Root, name="socket",
                                         textvariable=self.queueStatus,
                                         width=20,
                                         relief="sunken")
         try:
             # Tk 8.0 option
             menubutton['direction'] = 'above'
-        except Tkinter.TclError:
+        except tkinter.TclError:
             pass
         menubutton.pack(in_=root, fill='both', side='right')
         viewer.Balloon.bind(menubutton, "Queue status\n"
                             +"Click for Queue Menu")
 
         # Create the queue status menu
-        menu = Tkinter.Menu(menubutton, name="queueMenu",
+        menu = tkinter.Menu(menubutton, name="queueMenu",
                             tearoffcommand=self.DoTearoff)
         menu.add_command(label='Clear Queue', command=self.DoClearQueue)
-        self.paused = Tkinter.IntVar()
+        self.paused = tkinter.IntVar()
         self.paused.set(0)
         menu.add_checkbutton(label='Pause Queue',
                              command=self.DoSetPause,
                              variable=self.paused, onvalue=1, offvalue=0)
         menu.add_separator()
-        self.raw = Tkinter.IntVar()
+        self.raw = tkinter.IntVar()
         self.raw.set(0)
         menu.add_checkbutton(label='Raw Mode',
                              command=self.DoSetRaw,
                              variable=self.raw, onvalue=1, offvalue=0)
         menu.add_separator()
 
-        self.burst = Tkinter.IntVar()
+        self.burst = tkinter.IntVar()
         self.burst.set(0)
 ##  	menu.add_radiobutton(label='Burst Mode',
 ##  			     command=self.DoSetBurst,
@@ -336,9 +336,9 @@ class QueueStatus:
         menubutton['menu']=menu
 
         # Create the update countdown timer
-        self.updateStatus = Tkinter.StringVar()
+        self.updateStatus = tkinter.StringVar()
         self.updateStatus.set("--:--:--")
-        updateS = Tkinter.Label(viewer.Root, name="countdown",
+        updateS = tkinter.Label(viewer.Root, name="countdown",
                                 textvariable=self.updateStatus, width=10,
                                 relief="sunken"
                                 )

@@ -39,8 +39,8 @@ def setTextOptions(textWin, names):
                        'relief', 'rmargin', 'spacing1', 'spacing2',
                        'spacing3', 'tabs', 'underline', 'wrap'),
                       names)
-    for i, j in vals.items():
-        apply(textWin.tag_configure, (i,), j)
+    for i, j in list(vals.items()):
+        textWin.tag_configure(*(i,), **j)
 
 def getOption(root, name, group, options):
     winopts = {}
@@ -79,7 +79,7 @@ def getCanvasObject(canvasWin, name, group):
     try:
         dict = getOption(canvasWin, name, group, ('type', 'coords'))
         type = dict['type']
-        coords = tuple(map(float, string.split(dict['coords'])))
+        coords = tuple(map(float, dict['coords'].split()))
         options = getOption(canvasWin, name, group, canvasTypes[type])
         return (getattr(canvasWin, "create_"+type), coords, options)
     except (ValueError, KeyError):
